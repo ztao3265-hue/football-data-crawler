@@ -274,8 +274,12 @@ class SofascoreCrawler(BaseCrawler):
         """解析真实 API 响应: featured.default (1X2) + featured.asian (亚盘)
 
         提取初盘(initialFractionalValue)和即时盘(fractionalValue)
+        Provider ID=1 → bet365
         """
         featured = odds_data.get("featured", {}) or {}
+        # 设置博彩商标识（Sofascore provider=1 对应 bet365）
+        if not match.odds_bookmaker:
+            match.odds_bookmaker = "bet365"
 
         # 欧赔 1X2: featured.default.choices[] = [{name:"1",fractionalValue:"11/20",initialFractionalValue:"1/1"}, ...]
         default_market = featured.get("default") or featured.get("fullTime") or {}
@@ -303,16 +307,21 @@ class SofascoreCrawler(BaseCrawler):
         asian_market = featured.get("asian", {})
         asian_choices = asian_market.get("choices", [])
         if asian_choices:
-            lines = []
-            lines_open = []
+            parts_curr = []
+            parts_open = []
             for c in asian_choices:
-                line = _extract_asian_line(c.get("name", ""))
+                name = c.get("name", "")
+                line = _extract_asian_line(name)
+                frac = str(c.get("fractionalValue", ""))
+                init_frac = str(c.get("initialFractionalValue", ""))
+                odds_curr = _frac_to_decimal(frac)
+                odds_open = _frac_to_decimal(init_frac)
                 if line:
-                    lines.append(line)
-                    lines_open.append(line)
-            if lines:
-                match.asian_handicap = ", ".join(lines)
-                match.asian_handicap_open = ", ".join(lines_open)
+                    parts_curr.append(f"({line})@{odds_curr}")
+                    parts_open.append(f"({line})@{odds_open}")
+            if parts_curr:
+                match.asian_handicap = ", ".join(parts_curr)
+                match.asian_handicap_open = ", ".join(parts_open)
 
         # 大小球: featured.overUnder.choices[] = [{name:"(2.5) Over",...}, ...]
         ou_market = featured.get("overUnder", {})

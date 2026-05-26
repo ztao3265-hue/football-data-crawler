@@ -232,6 +232,7 @@ class MatchImporter:
         existing = session.execute(
             select(Odds).where(
                 Odds.match_id == match_id,
+                Odds.bookmaker == bookmaker,
                 Odds.source == source,
             )
         ).scalar_one_or_none()

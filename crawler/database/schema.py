@@ -142,10 +142,12 @@ class Odds(Base):
 
     __table_args__ = (
         Index("ix_odds_source", "source"),
+        Index("ix_odds_bookmaker", "bookmaker"),
+        UniqueConstraint("match_id", "bookmaker", "source", name="uq_odds_match_bookmaker_src"),
     )
 
     def __repr__(self):
-        return f"<Odds {self.match_id} H:{self.odds_home} D:{self.odds_draw} A:{self.odds_away}>"
+        return f"<Odds {self.match_id} @{self.bookmaker} H:{self.odds_home} D:{self.odds_draw} A:{self.odds_away}>"
 
 
 class OddsHistory(Base):
