@@ -20,6 +20,10 @@ class MatchData:
     asian_handicap: str = ""
     over_under: str = ""
     odds_bookmaker: str = ""
+    half_time_score: str = ""
+    season: str = ""
+    round: str = ""
+    status: str = ""
     collected_at: str = field(default_factory=lambda: datetime.now().isoformat())
 
     def to_dict(self) -> dict:

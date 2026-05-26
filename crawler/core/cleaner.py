@@ -51,9 +51,10 @@ def make_match_key(match: dict) -> str:
 
 
 def merge_odds(existing: dict, incoming: dict) -> dict:
-    """合并赔率数据：优先非空值"""
-    odds_fields = ["odds_home", "odds_draw", "odds_away", "asian_handicap", "over_under", "odds_bookmaker"]
-    for field in odds_fields:
+    """合并赔率及补充数据：优先非空值"""
+    fields = ["odds_home", "odds_draw", "odds_away", "asian_handicap", "over_under",
+              "odds_bookmaker", "half_time_score", "season", "round", "status"]
+    for field in fields:
         if not existing.get(field) and incoming.get(field):
             existing[field] = incoming[field]
     return existing

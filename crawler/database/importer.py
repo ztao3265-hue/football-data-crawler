@@ -106,13 +106,15 @@ class MatchImporter:
                 except ValueError:
                     pass
 
-        # 状态推导
-        if home_score is not None and away_score is not None:
+        # 状态推导（优先使用数据中的状态）
+        if data.get("status"):
+            status = data["status"].strip().lower()
+        elif home_score is not None and away_score is not None:
             status = "finished"
         elif kickoff_dt and kickoff_dt > datetime.now(tz=timezone.utc).replace(tzinfo=None):
             status = "scheduled"
         elif kickoff_dt:
-            status = "finished"  # 已过开球时间但无比分，假定已完赛
+            status = "finished"
         else:
             status = "scheduled"
 
@@ -129,6 +131,9 @@ class MatchImporter:
             home_score=home_score,
             away_score=away_score,
             score_display=score_str,
+            half_time_score=data.get("half_time_score", ""),
+            season=data.get("season", ""),
+            round=data.get("round", ""),
             status=status,
             collected_at=datetime.now(tz=timezone.utc).replace(tzinfo=None),
         )
@@ -164,6 +169,22 @@ class MatchImporter:
                         updated = True
                     except ValueError:
                         pass
+
+        if not match.half_time_score and data.get("half_time_score"):
+            match.half_time_score = data["half_time_score"]
+            updated = True
+
+        if not match.season and data.get("season"):
+            match.season = data["season"]
+            updated = True
+
+        if not match.round and data.get("round"):
+            match.round = data["round"]
+            updated = True
+
+        if not match.status and data.get("status"):
+            match.status = data["status"].strip().lower()
+            updated = True
 
         if updated:
             match.updated_at = datetime.now(tz=timezone.utc).replace(tzinfo=None)
