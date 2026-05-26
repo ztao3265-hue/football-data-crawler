@@ -1,7 +1,7 @@
 """数据库模型 — SQLAlchemy ORM"""
 
 import hashlib
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import (
     Column, Integer, BigInteger, String, Float, DateTime,
@@ -12,6 +12,11 @@ from sqlalchemy.orm import DeclarativeBase, relationship
 
 class Base(DeclarativeBase):
     pass
+
+
+def _utcnow():
+    """返回 naive UTC datetime，替代已弃用的 _utcnow()"""
+    return datetime.now(tz=timezone.utc).replace(tzinfo=None)
 
 
 def generate_match_id(source: str, home_team: str, away_team: str, kickoff_time: str) -> str:
@@ -40,8 +45,8 @@ class League(Base):
     name = Column(String(255), nullable=False)
     country = Column(String(100), default="")
     source = Column(String(50), default="")
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=_utcnow)
+    updated_at = Column(DateTime, default=_utcnow, onupdate=_utcnow)
 
     matches = relationship("Match", back_populates="league_rel")
     teams = relationship("Team", back_populates="league_rel")
@@ -58,14 +63,12 @@ class Team(Base):
     name = Column(String(255), nullable=False, index=True)
     country = Column(String(100), default="")
     league_id = Column(String(8), ForeignKey("leagues.id"), nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=_utcnow)
+    updated_at = Column(DateTime, default=_utcnow, onupdate=_utcnow)
 
     league_rel = relationship("League", back_populates="teams")
 
-    __table_args__ = (
-        Index("ix_teams_name", "name"),
-    )
+    # name 字段已通过 index=True 自动创建索引，无需在 __table_args__ 中重复定义
 
     def __repr__(self):
         return f"<Team {self.id} '{self.name}'>"
@@ -90,10 +93,10 @@ class Match(Base):
     away_score = Column(Integer, nullable=True)
     score_display = Column(String(20), default="")
     status = Column(String(20), default="scheduled")
-    collected_at = Column(DateTime, default=datetime.utcnow)
+    collected_at = Column(DateTime, default=_utcnow)
     is_archived = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=_utcnow)
+    updated_at = Column(DateTime, default=_utcnow, onupdate=_utcnow)
 
     league_rel = relationship("League", back_populates="matches")
     home_team_rel = relationship("Team", foreign_keys=[home_team_id])
@@ -101,7 +104,6 @@ class Match(Base):
     odds = relationship("Odds", back_populates="match_rel", cascade="all, delete-orphan")
 
     __table_args__ = (
-        Index("ix_matches_match_id", "match_id"),
         Index("ix_matches_kickoff", "kickoff_time"),
         Index("ix_matches_league", "league_id"),
         Index("ix_matches_source", "source"),
@@ -124,13 +126,12 @@ class Odds(Base):
     odds_away = Column(Float, nullable=True)
     asian_handicap = Column(String(50), default="")
     over_under = Column(String(50), default="")
-    collected_at = Column(DateTime, default=datetime.utcnow)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    collected_at = Column(DateTime, default=_utcnow)
+    created_at = Column(DateTime, default=_utcnow)
 
     match_rel = relationship("Match", back_populates="odds")
 
     __table_args__ = (
-        Index("ix_odds_match_id", "match_id"),
         Index("ix_odds_source", "source"),
     )
 

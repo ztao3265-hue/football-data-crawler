@@ -2,7 +2,7 @@
 
 import json
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List
 
 from sqlalchemy import select, exists
@@ -109,10 +109,12 @@ class MatchImporter:
         # 状态推导
         if home_score is not None and away_score is not None:
             status = "finished"
-        elif kickoff_dt and kickoff_dt > datetime.utcnow():
+        elif kickoff_dt and kickoff_dt > datetime.now(tz=timezone.utc).replace(tzinfo=None):
             status = "scheduled"
+        elif kickoff_dt:
+            status = "finished"  # 已过开球时间但无比分，假定已完赛
         else:
-            status = "live" if score_str and score_str != "未开始" else "scheduled"
+            status = "scheduled"
 
         match = Match(
             match_id=match_id,
@@ -128,7 +130,7 @@ class MatchImporter:
             away_score=away_score,
             score_display=score_str,
             status=status,
-            collected_at=datetime.utcnow(),
+            collected_at=datetime.now(tz=timezone.utc).replace(tzinfo=None),
         )
         session.add(match)
 
@@ -164,7 +166,7 @@ class MatchImporter:
                         pass
 
         if updated:
-            match.updated_at = datetime.utcnow()
+            match.updated_at = datetime.now(tz=timezone.utc).replace(tzinfo=None)
 
         # 添加新来源的赔率
         source = data.get("source", "")
@@ -198,7 +200,7 @@ class MatchImporter:
                     odds_away=float(odds_away) if odds_away else None,
                     asian_handicap=str(data.get("asian_handicap", "")),
                     over_under=str(data.get("over_under", "")),
-                    collected_at=datetime.utcnow(),
+                    collected_at=datetime.now(tz=timezone.utc).replace(tzinfo=None),
                 )
                 session.add(odds)
             except (ValueError, TypeError):
