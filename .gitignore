@@ -9,6 +9,9 @@ build/
 venv/
 .venv/
 env/
+.pytest_cache/
+.coverage
+*.db
 
 # IDE
 .idea/
@@ -23,6 +26,7 @@ env/
 # 数据输出
 exports/*.json
 exports/*.csv
+exports/*.xlsx
 data/raw/*
 data/clean/*
 !data/raw/.gitkeep
@@ -36,12 +40,15 @@ crawler/logs/*.log
 crawler/cache/*
 !crawler/cache/.gitkeep
 
-# 截图
+# 截图和输出
 crawler/output/screenshots/*
 !crawler/output/screenshots/.gitkeep
+crawler/output/*
 
-# 浏览器
+# Playwright
 browser_data/
+playwright-report/
+test-results/
 
 # OS
 .DS_Store
