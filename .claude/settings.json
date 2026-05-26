@@ -2,8 +2,13 @@
   "hooks": {
     "Stop": [
       {
-        "type": "command",
-        "command": "cd D:/Projects/football-data-crawler && if (git status --porcelain) { git add -A; git commit -m 'auto: session checkpoint'; git push }"
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"D:/Projects/football-data-crawler\" && if [ -n \"$(git status --porcelain)\" ]; then git add -A && git commit -m \"auto: session checkpoint\" && git push; fi"
+          }
+        ]
       }
     ]
   },
