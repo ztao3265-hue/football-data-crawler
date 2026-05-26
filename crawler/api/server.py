@@ -69,7 +69,7 @@ def start_api(port: int = 8000):
     def get_match(match_id: str):
         session = _get_session()
         try:
-            match = session.get(Match, match_id)
+            match = session.execute(select(Match).where(Match.match_id == match_id)).scalar_one_or_none()
             if not match:
                 raise HTTPException(status_code=404, detail="比赛不存在")
             data = _match_to_dict(match)
