@@ -1,0 +1,25 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "type": "command",
+        "command": "cd D:/Projects/football-data-crawler && if (git status --porcelain) { git add -A; git commit -m 'auto: session checkpoint'; git push }"
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(git status *)",
+      "Bash(git log *)",
+      "Bash(git diff *)",
+      "Bash(git branch *)",
+      "Bash(git remote *)",
+      "Bash(py -3 main.py *)",
+      "Bash(py -3 -m pip *)",
+      "Bash(py -3 -c *)"
+    ]
+  }
+}
