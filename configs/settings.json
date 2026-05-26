@@ -1,0 +1,36 @@
+{
+  "browser": {
+    "headless": true,
+    "viewport": { "width": 1920, "height": 1080 },
+    "locale": "zh-CN",
+    "timezone_id": "Asia/Shanghai",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  },
+  "rate_limit": {
+    "min_delay_seconds": 2.0,
+    "max_delay_seconds": 5.0,
+    "max_requests_per_minute": 20,
+    "burst_limit": 5
+  },
+  "retry": {
+    "max_retries": 3,
+    "retry_delay_seconds": 5,
+    "backoff_multiplier": 2.0
+  },
+  "export": {
+    "formats": ["json", "csv"],
+    "output_dir": "exports",
+    "filename_prefix": "matches"
+  },
+  "logging": {
+    "level": "INFO",
+    "rotation": "10 MB",
+    "retention": "7 days",
+    "format": "{time:YYYY-MM-DD HH:mm:ss.SSS} | {level: <8} | {name}:{function}:{line} - {message}"
+  },
+  "cache": {
+    "enabled": true,
+    "ttl_minutes": 30,
+    "max_size_mb": 500
+  }
+}

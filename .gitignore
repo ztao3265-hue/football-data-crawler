@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+dist/
+build/
+.eggs/
+venv/
+.venv/
+env/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 环境变量
+.env
+.env.local
+
+# 数据输出
+exports/*.json
+exports/*.csv
+data/raw/*
+data/clean/*
+!data/raw/.gitkeep
+!data/clean/.gitkeep
+
+# 日志
+crawler/logs/*.log
+!crawler/logs/.gitkeep
+
+# 缓存
+crawler/cache/*
+!crawler/cache/.gitkeep
+
+# 截图
+crawler/output/screenshots/*
+!crawler/output/screenshots/.gitkeep
+
+# 浏览器
+browser_data/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Node (如果有前端)
+node_modules/
