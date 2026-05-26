@@ -32,5 +32,14 @@
     "enabled": true,
     "ttl_minutes": 30,
     "max_size_mb": 500
+  },
+  "database": {
+    "host": "localhost",
+    "port": 5432,
+    "name": "football_crawler",
+    "user": "postgres",
+    "pool_size": 5,
+    "max_overflow": 10,
+    "auto_import_clean": true
   }
 }

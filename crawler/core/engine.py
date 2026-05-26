@@ -99,16 +99,38 @@ class CrawlerEngine:
         return self.results
 
     def export(self, date_str: str):
-        """导出所有采集数据（含清洗版本）"""
+        """导出所有采集数据（含清洗版本 + 数据库入库）"""
         date_str = date_str or datetime.now().strftime("%Y-%m-%d")
         if self.all_matches:
             self.exporter.export(self.all_matches, date_str)
             # 清洗导出
             from crawler.core.cleaner import export_clean
             raw_data = [m.to_dict() if hasattr(m, "to_dict") else m for m in self.all_matches]
-            export_clean(raw_data, output_dir=self.exporter.output_dir, date_str=date_str)
+            cleaned = export_clean(raw_data, output_dir=self.exporter.output_dir, date_str=date_str)
+            # 数据库入库
+            self._import_to_database(cleaned)
         if self.results:
             self.exporter.export_summary(self.results, date_str)
+
+    def _import_to_database(self, cleaned_matches: list):
+        """将清洗后的数据导入 PostgreSQL"""
+        try:
+            from crawler.database.importer import MatchImporter
+            from crawler.database.connection import get_db
+
+            db = get_db()
+            if db.test_connection():
+                db.create_all()
+                importer = MatchImporter()
+                stats = importer.import_matches(cleaned_matches)
+                logger.info(
+                    f"数据库入库: +{stats['inserted']} 新增, "
+                    f"~{stats['updated']} 更新, "
+                    f"-{stats['skipped']} 跳过, "
+                    f"x{stats['errors']} 错误"
+                )
+        except Exception as e:
+            logger.warning(f"数据库导入跳过（PostgreSQL 未就绪）: {e}")
 
     def print_summary(self):
         """打印采集摘要"""

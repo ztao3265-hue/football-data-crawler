@@ -75,6 +75,28 @@ def main():
         default="exports",
         help="导出目录，默认 exports",
     )
+    parser.add_argument(
+        "--db-init",
+        action="store_true",
+        help="初始化 PostgreSQL 数据库表结构",
+    )
+    parser.add_argument(
+        "--db-import",
+        type=str,
+        nargs="?",
+        const="exports/clean_matches.json",
+        help="将 clean_matches.json 导入数据库",
+    )
+    parser.add_argument(
+        "--db-status",
+        action="store_true",
+        help="查看数据库状态和统计",
+    )
+    parser.add_argument(
+        "--db-test",
+        action="store_true",
+        help="测试数据库连接",
+    )
 
     args = parser.parse_args()
 
@@ -89,6 +111,20 @@ def main():
     # Web UI
     if args.ui:
         run_web_ui(args.ui_port)
+        return
+
+    # 数据库操作
+    if args.db_test:
+        asyncio.run(run_db_test())
+        return
+    if args.db_init:
+        asyncio.run(run_db_init())
+        return
+    if args.db_import:
+        asyncio.run(run_db_import(args.db_import))
+        return
+    if args.db_status:
+        asyncio.run(run_db_status())
         return
 
     # 采集
@@ -222,7 +258,89 @@ async def run_setup():
     print("    python main.py --source sofascore --date today")
     print("    python main.py --all --date today")
     print("    python main.py --ui")
+    print("    python main.py --db-init")
+    print("    python main.py --db-import")
     print("=" * 60 + "\n")
+
+
+async def run_db_test():
+    """测试数据库连接"""
+    from crawler.database.connection import get_db
+    db = get_db()
+    print(f"连接地址: {db.database_url.replace(db.database_url.split('@')[0].split('://')[-1], '***') if '@' in db.database_url else db.database_url}")
+    ok = db.test_connection()
+    if ok:
+        print("数据库连接正常")
+    else:
+        print("数据库连接失败，请确认 PostgreSQL 已启动")
+
+
+async def run_db_init():
+    """初始化数据库表"""
+    from crawler.database.connection import get_db
+    db = get_db()
+    if not db.test_connection():
+        print("无法连接数据库，请先启动 PostgreSQL")
+        return
+    db.create_all()
+    print("数据库表创建完成: leagues, teams, matches, odds")
+
+
+async def run_db_import(filepath: str):
+    """从文件导入数据到数据库"""
+    from crawler.database.connection import get_db
+    from crawler.database.importer import import_clean_file
+
+    db = get_db()
+    if not db.test_connection():
+        print("无法连接数据库，请先启动 PostgreSQL")
+        return
+
+    db.create_all()
+    stats = import_clean_file(filepath)
+
+    print(f"\n导入结果:")
+    print(f"  新增: {stats['inserted']} 条")
+    print(f"  更新: {stats['updated']} 条")
+    print(f"  跳过: {stats['skipped']} 条")
+    print(f"  错误: {stats['errors']} 条")
+
+
+async def run_db_status():
+    """查看数据库状态"""
+    from crawler.database.connection import get_db
+    from sqlalchemy import text
+
+    db = get_db()
+    if not db.test_connection():
+        print("无法连接数据库，请先启动 PostgreSQL")
+        return
+
+    with db.session() as session:
+        tables = ["matches", "odds", "teams", "leagues"]
+        print("\n数据库状态:")
+        print("-" * 40)
+        for table in tables:
+            result = session.execute(text(f"SELECT COUNT(*) FROM {table}"))
+            count = result.scalar()
+            print(f"  {table:12s}: {count:6d} 行")
+
+        # 比赛状态分布
+        result = session.execute(text(
+            "SELECT status, COUNT(*) FROM matches GROUP BY status ORDER BY COUNT(*) DESC"
+        ))
+        print("\n比赛状态分布:")
+        for row in result:
+            print(f"  {row[0]:12s}: {row[1]:6d}")
+
+        # 数据源分布
+        result = session.execute(text(
+            "SELECT source, COUNT(*) FROM matches GROUP BY source ORDER BY COUNT(*) DESC"
+        ))
+        print("\n数据源分布:")
+        for row in result:
+            print(f"  {row[0]:20s}: {row[1]:6d}")
+        print("-" * 40)
 
 
 if __name__ == "__main__":
