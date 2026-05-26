@@ -45,7 +45,7 @@ class SofascoreCrawler(BaseCrawler):
         self.base_url = config.get("base_url", "https://www.sofascore.com")
 
     async def collect(self, date_str: str) -> List[MatchData]:
-        self.logger.info(f"开始采集 Sofascore 数据: {date_str}")
+        self.logger.info(f"[Sofascore] 开始采集: {date_str}")
         all_matches = []
         seen = set()
 
@@ -56,7 +56,19 @@ class SofascoreCrawler(BaseCrawler):
             if key not in seen:
                 seen.add(key)
                 all_matches.append(m)
-        self.logger.info(f"浏览器采集到 {len(browser_matches)} 条（去重后 {len(all_matches)} 条）")
+        self.logger.info(f"[Sofascore] 浏览器采集: {len(browser_matches)} 条（去重后 {len(all_matches)} 条）")
+
+        # 按联赛统计
+        league_counts = {}
+        league_odds = {}
+        for m in all_matches:
+            league_counts[m.league] = league_counts.get(m.league, 0) + 1
+            if m.odds_home:
+                league_odds[m.league] = league_odds.get(m.league, 0) + 1
+        top_leagues = sorted(league_counts.items(), key=lambda x: x[1], reverse=True)[:8]
+        self.logger.info(f"[Sofascore] 联赛分布: {', '.join(f'{l}({c})' for l, c in top_leagues)}")
+        if league_odds:
+            self.logger.info(f"[Sofascore] 含赔率联赛: {', '.join(f'{l}({c})' for l, c in sorted(league_odds.items(), key=lambda x: x[1], reverse=True))}")
 
         # API 采集作为补充
         api_matches = await self._collect_via_api(date_str)
@@ -68,7 +80,7 @@ class SofascoreCrawler(BaseCrawler):
                 all_matches.append(m)
                 added += 1
         if added:
-            self.logger.info(f"API 补充采集到 {added} 条")
+            self.logger.info(f"[Sofascore] API 补充采集: {added} 条")
 
         raw_data = [m.to_dict() for m in all_matches]
         if raw_data:
@@ -84,6 +96,8 @@ class SofascoreCrawler(BaseCrawler):
         """浏览器采集：拦截 per-tournament API + 赔率 API 响应"""
         matches = []
         page = None
+        stats = {"events_api": 0, "odds_api": 0, "odds_ok": 0, "odds_no_match": 0,
+                 "odds_no_featured": 0, "odds_url_parse_err": 0}
 
         try:
             page = await self.browser.new_page()
@@ -94,10 +108,22 @@ class SofascoreCrawler(BaseCrawler):
             interceptor.add_url_filter("/api/v1/event/")
             await interceptor.start()
 
-            url = f"{self.base_url}/football/{date_str}"
-            await page.goto(url, wait_until="domcontentloaded", timeout=60000)
-            await self.browser.wait_for_network_idle(page, timeout=30000)
-            await self.browser.scroll_page(page, times=3)
+            page_url = f"{self.base_url}/football/{date_str}"
+            self.logger.info(f"[Sofascore] 请求页面: {page_url}")
+            try:
+                await page.goto(page_url, wait_until="domcontentloaded", timeout=60000)
+            except Exception as e:
+                self.logger.warning(f"[Sofascore] 页面加载超时/失败: {e}")
+                # 尝试继续使用已加载的内容
+            try:
+                await self.browser.wait_for_network_idle(page, timeout=30000)
+            except Exception:
+                self.logger.debug(f"[Sofascore] wait_for_network_idle 超时，使用已有数据继续")
+
+            try:
+                await self.browser.scroll_page(page, times=3)
+            except Exception:
+                self.logger.debug(f"[Sofascore] scroll_page 失败，使用已有数据继续")
 
             html = await self.browser.get_page_html(page)
             save_text(html, f"data/raw/sofascore_{date_str}.html")
@@ -108,6 +134,8 @@ class SofascoreCrawler(BaseCrawler):
 
             # 解析拦截到的赛事数据
             api_responses = interceptor.get_filtered_responses("events")
+            stats["events_api"] = len(api_responses)
+            self.logger.info(f"[Sofascore] 拦截赛事 API 响应: {stats['events_api']} 个")
             seen_ids = set()
             event_map = {}
 
@@ -125,35 +153,91 @@ class SofascoreCrawler(BaseCrawler):
                             matches.append(match)
                             event_map[eid] = match
 
+            self.logger.info(f"[Sofascore] 解析赛事: {len(matches)} 场 (event_map: {len(event_map)} 个 ID)")
+
             # 从拦截的赔率响应中提取赔率数据
             if ODDS_FETCH_ENABLED:
                 odds_responses = interceptor.get_filtered_responses("/odds/")
-                odds_count = 0
+                stats["odds_api"] = len(odds_responses)
+                matched_event_ids = set()
+
                 for resp in odds_responses:
+                    resp_url = resp.get("url", "")
+                    resp_status = resp.get("status", 0)
                     body = resp.get("body", {})
-                    if isinstance(body, dict) and "featured" in body:
-                        # 从 URL 中提取 event_id: /api/v1/event/{event_id}/odds/1/featured
-                        url = resp.get("url", "")
-                        parts = url.split("/")
-                        try:
-                            odds_idx = parts.index("odds")
-                            eid = parts[odds_idx - 1]
-                        except (ValueError, IndexError):
-                            continue
-                        match = event_map.get(eid)
-                        if match and body.get("featured"):
-                            self._apply_odds(match, body)
-                            odds_count += 1
-                self.logger.info(f"赔率采集: {odds_count}/{len(event_map)} 场")
+
+                    if not isinstance(body, dict) or "featured" not in body:
+                        stats["odds_no_featured"] += 1
+                        continue
+
+                    featured = body.get("featured")
+                    if not featured:
+                        stats["odds_no_featured"] += 1
+                        self.logger.debug(f"[Sofascore] 赔率响应无 featured: {resp_url}")
+                        continue
+
+                    # 从 URL 中提取 event_id
+                    parts = resp_url.split("/")
+                    eid = ""
+                    try:
+                        odds_idx = parts.index("odds")
+                        eid = parts[odds_idx - 1]
+                    except (ValueError, IndexError):
+                        stats["odds_url_parse_err"] += 1
+                        self.logger.debug(f"[Sofascore] 赔率 URL 解析失败: {resp_url}")
+                        continue
+
+                    match = event_map.get(eid)
+                    if not match:
+                        stats["odds_no_match"] += 1
+                        self.logger.debug(f"[Sofascore] 赔率 event_id={eid} 无匹配赛事 (status={resp_status})")
+                        continue
+
+                    self._apply_odds(match, body)
+                    stats["odds_ok"] += 1
+                    matched_event_ids.add(eid)
+                    self.logger.debug(
+                        f"[Sofascore] 赔率命中: event={eid} "
+                        f"{match.home_team} vs {match.away_team} "
+                        f"({match.league}) "
+                        f"欧赔={match.odds_home}/{match.odds_draw}/{match.odds_away} "
+                        f"亚盘={match.asian_handicap or '无'} "
+                        f"大小球={match.over_under or '无'}"
+                    )
+
+                # 汇总日志
+                self.logger.info(
+                    f"[Sofascore] 赔率汇总: 拦截 {stats['odds_api']} 个响应, "
+                    f"命中 {stats['odds_ok']} 场 ({len(matched_event_ids)} 个独立赛事), "
+                    f"跳过: 无 featured={stats['odds_no_featured']}, "
+                    f"无匹配赛事={stats['odds_no_match']}, "
+                    f"URL 解析错={stats['odds_url_parse_err']}"
+                )
+
+                # 联赛维度统计
+                league_odds = {}
+                for eid in matched_event_ids:
+                    m = event_map.get(eid)
+                    if m:
+                        league_odds[m.league] = league_odds.get(m.league, 0) + 1
+                if league_odds:
+                    self.logger.info(
+                        f"[Sofascore] 含赔率联赛: "
+                        + ", ".join(f"{l}({c})" for l, c in
+                                     sorted(league_odds.items(), key=lambda x: x[1], reverse=True))
+                    )
 
             interceptor.save_responses(f"data/raw/sofascore_api_{date_str}.json")
 
         except Exception as e:
-            self.logger.error(f"Sofascore 浏览器采集失败: {e}")
+            self.logger.error(f"[Sofascore] 浏览器采集异常: {type(e).__name__}: {e}")
 
         finally:
             if page:
-                await page.close()
+                try:
+                    await page.close()
+                except Exception:
+                    pass
 
         return matches
 

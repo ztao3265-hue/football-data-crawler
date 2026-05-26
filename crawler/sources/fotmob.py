@@ -45,45 +45,8 @@ class FotmobCrawler(BaseCrawler):
         return matches
 
     async def _collect_via_api(self, date_str: str) -> List[MatchData]:
-        """通过 FotMob API 采集（含赔率）"""
-        matches = []
-        url = f"{self.api_base}/matches?date={date_str}"
-
-        async def _fetch():
-            async with httpx.AsyncClient(timeout=30) as client:
-                headers = {
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-                    "Accept": "application/json",
-                    "Origin": "https://www.fotmob.com",
-                    "Referer": "https://www.fotmob.com/",
-                }
-                resp = await client.get(url, headers=headers)
-                resp.raise_for_status()
-                return resp.json()
-
-        try:
-            data = await self.safe_request(_fetch)
-            leagues = data.get("leagues", [])
-
-            match_map = {}
-            for league in leagues:
-                for m in league.get("matches", []):
-                    match = self._parse_match(m, league)
-                    if match:
-                        match_id = str(m.get("id", ""))
-                        matches.append(match)
-                        if match_id:
-                            match_map[match_id] = match
-
-            # 批量获取赔率
-            if ODDS_FETCH_ENABLED and match_map:
-                odds_count = await self._fetch_odds_batch(match_map)
-                self.logger.info(f"赔率采集: {odds_count}/{len(match_map)} 场比赛有赔率数据")
-
-        except Exception as e:
-            self.logger.error(f"FotMob API 请求失败: {e}")
-
-        return matches
+        """通过 FotMob API 采集（日期 API 格式不兼容，由浏览器路径替代）"""
+        return []
 
     async def _fetch_odds_batch(self, match_map: dict) -> int:
         """批量并发获取 matchDetails 中的赔率"""
