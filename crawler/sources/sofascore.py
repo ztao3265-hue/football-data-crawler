@@ -106,6 +106,7 @@ class SofascoreCrawler(BaseCrawler):
             interceptor.add_url_filter("/api/v1/unique-tournament/")
             interceptor.add_url_filter("/api/v1/sport/football")
             interceptor.add_url_filter("/api/v1/event/")
+            interceptor.add_url_filter("featured-events")
             await interceptor.start()
 
             page_url = f"{self.base_url}/football/{date_str}"
@@ -132,26 +133,54 @@ class SofascoreCrawler(BaseCrawler):
                 page, f"sofascore_{date_str}_{datetime.now():%H%M%S}.png"
             )
 
-            # 解析拦截到的赛事数据
-            api_responses = interceptor.get_filtered_responses("events")
-            stats["events_api"] = len(api_responses)
-            self.logger.info(f"[Sofascore] 拦截赛事 API 响应: {stats['events_api']} 个")
+            # 解析拦截到的赛事数据（来自多种 API 响应格式）
+            # 1) tournament API: /unique-tournament/{id}/scheduled-events/{date}
+            tournament_resps = interceptor.get_filtered_responses("scheduled-events")
+            # 2) event detail API: /event/{id} (不含 odds/votes)
+            event_detail_resps = [
+                r for r in interceptor.api_responses
+                if "/event/" in r.get("url", "") and "/odds/" not in r.get("url", "")
+                and "/votes" not in r.get("url", "")
+            ]
+            # 3) featured-events API: /odds/{n}/featured-events/football
+            featured_resps = interceptor.get_filtered_responses("featured-events")
+
+            all_event_resps = tournament_resps + event_detail_resps + featured_resps
+            stats["events_api"] = len(all_event_resps)
+            self.logger.info(
+                f"[Sofascore] 拦截赛事 API: tournament={len(tournament_resps)} "
+                f"event_detail={len(event_detail_resps)} featured={len(featured_resps)}"
+            )
             seen_ids = set()
             event_map = {}
 
-            for resp in api_responses:
+            for resp in all_event_resps:
                 body = resp.get("body", {})
-                if isinstance(body, dict):
-                    events = body.get("events", [])
-                    for event in events:
-                        eid = str(event.get("id", ""))
-                        if eid in seen_ids or not eid:
-                            continue
-                        seen_ids.add(eid)
-                        match = self._parse_event(event)
-                        if match:
-                            matches.append(match)
-                            event_map[eid] = match
+                if not isinstance(body, dict):
+                    continue
+
+                candidates = []
+                # tournament API → body.events[]
+                if "events" in body:
+                    candidates.extend(body["events"])
+                # event detail → body.event (单对象)
+                if isinstance(body.get("event"), dict):
+                    candidates.append(body["event"])
+                # featured-events → body.featuredEvents[]
+                if "featuredEvents" in body:
+                    candidates.extend(body["featuredEvents"])
+
+                for event in candidates:
+                    if not isinstance(event, dict):
+                        continue
+                    eid = str(event.get("id", ""))
+                    if eid in seen_ids or not eid:
+                        continue
+                    seen_ids.add(eid)
+                    match = self._parse_event(event)
+                    if match:
+                        matches.append(match)
+                        event_map[eid] = match
 
             self.logger.info(f"[Sofascore] 解析赛事: {len(matches)} 场 (event_map: {len(event_map)} 个 ID)")
 
@@ -242,37 +271,50 @@ class SofascoreCrawler(BaseCrawler):
         return matches
 
     def _apply_odds(self, match: MatchData, odds_data: dict):
-        """解析真实 API 响应: featured.default (1X2) + featured.asian (亚盘)"""
+        """解析真实 API 响应: featured.default (1X2) + featured.asian (亚盘)
+
+        提取初盘(initialFractionalValue)和即时盘(fractionalValue)
+        """
         featured = odds_data.get("featured", {}) or {}
 
-        # 欧赔 1X2: featured.default.choices[] = [{name:"1",fractionalValue:"11/20"}, ...]
+        # 欧赔 1X2: featured.default.choices[] = [{name:"1",fractionalValue:"11/20",initialFractionalValue:"1/1"}, ...]
         default_market = featured.get("default") or featured.get("fullTime") or {}
         choices = default_market.get("choices", [])
         if choices:
             for c in choices:
                 name = c.get("name", "")
+                # 即时盘
                 frac = str(c.get("fractionalValue", ""))
                 decimal = _frac_to_decimal(frac)
+                # 初盘
+                init_frac = str(c.get("initialFractionalValue", ""))
+                init_decimal = _frac_to_decimal(init_frac)
                 if name == "1":
                     match.odds_home = decimal
+                    match.odds_home_open = init_decimal
                 elif name == "X":
                     match.odds_draw = decimal
+                    match.odds_draw_open = init_decimal
                 elif name == "2":
                     match.odds_away = decimal
+                    match.odds_away_open = init_decimal
 
-        # 亚盘: featured.asian.choices[] = [{name:"(-1.5) Team", fractionalValue:"1/1"}, ...]
+        # 亚盘: featured.asian.choices[] = [{name:"(-1.5) Team", fractionalValue:"1/1",initialFractionalValue:"9/10"}, ...]
         asian_market = featured.get("asian", {})
         asian_choices = asian_market.get("choices", [])
         if asian_choices:
             lines = []
+            lines_open = []
             for c in asian_choices:
                 line = _extract_asian_line(c.get("name", ""))
                 if line:
                     lines.append(line)
+                    lines_open.append(line)
             if lines:
                 match.asian_handicap = ", ".join(lines)
+                match.asian_handicap_open = ", ".join(lines_open)
 
-        # 大小球: 检查是否有 overUnder 市场
+        # 大小球: featured.overUnder.choices[] = [{name:"(2.5) Over",...}, ...]
         ou_market = featured.get("overUnder", {})
         ou_choices = ou_market.get("choices", [])
         if ou_choices:
@@ -284,6 +326,7 @@ class SofascoreCrawler(BaseCrawler):
                     totals.append(total)
             if totals:
                 match.over_under = ", ".join(totals)
+                match.over_under_open = ", ".join(totals)
 
     def _parse_event(self, event: dict) -> MatchData | None:
         """解析赛事事件为统一格式"""

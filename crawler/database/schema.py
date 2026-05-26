@@ -129,6 +129,12 @@ class Odds(Base):
     odds_away = Column(Float, nullable=True)
     asian_handicap = Column(String(50), default="")
     over_under = Column(String(50), default="")
+    # 初盘（首次采集时记录，后续不更新）
+    odds_home_open = Column(Float, nullable=True)
+    odds_draw_open = Column(Float, nullable=True)
+    odds_away_open = Column(Float, nullable=True)
+    asian_handicap_open = Column(String(50), default="")
+    over_under_open = Column(String(50), default="")
     collected_at = Column(DateTime, default=_utcnow)
     created_at = Column(DateTime, default=_utcnow)
 
@@ -155,6 +161,12 @@ class OddsHistory(Base):
     odds_away = Column(Float, nullable=True)
     asian_handicap = Column(String(50), default="")
     over_under = Column(String(50), default="")
+    # 初盘快照
+    odds_home_open = Column(Float, nullable=True)
+    odds_draw_open = Column(Float, nullable=True)
+    odds_away_open = Column(Float, nullable=True)
+    asian_handicap_open = Column(String(50), default="")
+    over_under_open = Column(String(50), default="")
     snapshot_at = Column(DateTime, nullable=False, index=True)
 
     match_rel = relationship("Match", back_populates="odds_history")

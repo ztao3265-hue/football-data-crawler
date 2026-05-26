@@ -207,6 +207,13 @@ class MatchImporter:
         over_under = str(data.get("over_under", ""))
         bookmaker = str(data.get("odds_bookmaker", ""))
 
+        # 初盘
+        odds_home_open = data.get("odds_home_open", "")
+        odds_draw_open = data.get("odds_draw_open", "")
+        odds_away_open = data.get("odds_away_open", "")
+        asian_open = str(data.get("asian_handicap_open", ""))
+        ou_open = str(data.get("over_under_open", ""))
+
         def _parse_float(v):
             try:
                 return float(v) if v else None
@@ -216,6 +223,9 @@ class MatchImporter:
         h = _parse_float(odds_home)
         d = _parse_float(odds_draw)
         a = _parse_float(odds_away)
+        h_open = _parse_float(odds_home_open)
+        d_open = _parse_float(odds_draw_open)
+        a_open = _parse_float(odds_away_open)
 
         now = datetime.now(tz=timezone.utc).replace(tzinfo=None)
 
@@ -227,6 +237,15 @@ class MatchImporter:
         ).scalar_one_or_none()
 
         if existing:
+            # 检查是否需要补填初盘
+            need_open_fill = (
+                (existing.odds_home_open is None and h_open is not None) or
+                (existing.odds_draw_open is None and d_open is not None) or
+                (existing.odds_away_open is None and a_open is not None) or
+                (not existing.asian_handicap_open and asian_open) or
+                (not existing.over_under_open and ou_open)
+            )
+
             # 检测赔率是否变化
             changed = (
                 existing.odds_home != h or
@@ -235,16 +254,28 @@ class MatchImporter:
                 existing.asian_handicap != asian or
                 existing.over_under != over_under
             )
-            if changed:
-                # 记录旧值到历史表
-                self._record_odds_history(session, existing, now)
-                # 更新为新的赔率值
-                existing.odds_home = h
-                existing.odds_draw = d
-                existing.odds_away = a
-                existing.asian_handicap = asian
-                existing.over_under = over_under
-                existing.bookmaker = bookmaker or existing.bookmaker
+            if changed or need_open_fill:
+                if changed:
+                    # 记录旧值到历史表
+                    self._record_odds_history(session, existing, now)
+                    # 更新为新的赔率值
+                    existing.odds_home = h
+                    existing.odds_draw = d
+                    existing.odds_away = a
+                    existing.asian_handicap = asian
+                    existing.over_under = over_under
+                    existing.bookmaker = bookmaker or existing.bookmaker
+
+                # 补填初盘（无论赔率是否变化）
+                if existing.odds_home_open is None and h_open is not None:
+                    existing.odds_home_open = h_open
+                    existing.odds_draw_open = d_open
+                    existing.odds_away_open = a_open
+                if not existing.asian_handicap_open and asian_open:
+                    existing.asian_handicap_open = asian_open
+                if not existing.over_under_open and ou_open:
+                    existing.over_under_open = ou_open
+
                 existing.collected_at = now
         else:
             odds = Odds(
@@ -256,6 +287,11 @@ class MatchImporter:
                 odds_away=a,
                 asian_handicap=asian,
                 over_under=over_under,
+                odds_home_open=h_open,
+                odds_draw_open=d_open,
+                odds_away_open=a_open,
+                asian_handicap_open=asian_open,
+                over_under_open=ou_open,
                 collected_at=now,
             )
             session.add(odds)
@@ -263,7 +299,7 @@ class MatchImporter:
             self._record_odds_history(session, odds, now)
 
     def _record_odds_history(self, session: Session, odds: Odds, snapshot_at):
-        """记录赔率快照到历史表"""
+        """记录赔率快照到历史表（含初盘）"""
         hist = OddsHistory(
             match_id=odds.match_id,
             source=odds.source,
@@ -273,6 +309,11 @@ class MatchImporter:
             odds_away=odds.odds_away,
             asian_handicap=odds.asian_handicap or "",
             over_under=odds.over_under or "",
+            odds_home_open=odds.odds_home_open,
+            odds_draw_open=odds.odds_draw_open,
+            odds_away_open=odds.odds_away_open,
+            asian_handicap_open=odds.asian_handicap_open or "",
+            over_under_open=odds.over_under_open or "",
             snapshot_at=snapshot_at,
         )
         session.add(hist)

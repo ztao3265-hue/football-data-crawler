@@ -20,6 +20,12 @@ class MatchData:
     asian_handicap: str = ""
     over_under: str = ""
     odds_bookmaker: str = ""
+    # 初盘（opening odds）
+    odds_home_open: str = ""
+    odds_draw_open: str = ""
+    odds_away_open: str = ""
+    asian_handicap_open: str = ""
+    over_under_open: str = ""
     half_time_score: str = ""
     season: str = ""
     round: str = ""
