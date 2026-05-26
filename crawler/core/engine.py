@@ -98,7 +98,7 @@ class CrawlerEngine:
 
         return self.results
 
-    def export(self, date_str: str):
+    def export(self, date_str: str, import_to_db: bool = True):
         """导出所有采集数据（含清洗版本 + 数据库入库）"""
         date_str = date_str or datetime.now().strftime("%Y-%m-%d")
         if self.all_matches:
@@ -108,7 +108,8 @@ class CrawlerEngine:
             raw_data = [m.to_dict() if hasattr(m, "to_dict") else m for m in self.all_matches]
             cleaned = export_clean(raw_data, output_dir=self.exporter.output_dir, date_str=date_str)
             # 数据库入库
-            self._import_to_database(cleaned)
+            if import_to_db:
+                self._import_to_database(cleaned)
         if self.results:
             self.exporter.export_summary(self.results, date_str)
 

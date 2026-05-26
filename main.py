@@ -7,6 +7,8 @@
     python main.py --all --date today
     python main.py --ui
     python main.py --setup
+    python main.py --schedule
+    python main.py --api
 """
 
 import argparse
@@ -97,6 +99,33 @@ def main():
         action="store_true",
         help="测试数据库连接",
     )
+    parser.add_argument(
+        "--schedule",
+        action="store_true",
+        help="启动定时自动采集服务",
+    )
+    parser.add_argument(
+        "--schedule-interval",
+        type=int,
+        default=30,
+        help="定时采集间隔（分钟），默认 30",
+    )
+    parser.add_argument(
+        "--api",
+        action="store_true",
+        help="启动 FastAPI 数据接口服务",
+    )
+    parser.add_argument(
+        "--api-port",
+        type=int,
+        default=8000,
+        help="API 服务端口，默认 8000",
+    )
+    parser.add_argument(
+        "--no-db",
+        action="store_true",
+        help="跳过数据库入库（仅导出文件）",
+    )
 
     args = parser.parse_args()
 
@@ -125,6 +154,16 @@ def main():
         return
     if args.db_status:
         asyncio.run(run_db_status())
+        return
+
+    # 定时调度
+    if args.schedule:
+        asyncio.run(run_schedule(args.schedule_interval, args.all, args.headless))
+        return
+
+    # API 服务
+    if args.api:
+        run_api(args.api_port)
         return
 
     # 采集
@@ -159,7 +198,7 @@ async def run_crawl(args, date_str: str, headless: bool):
         await engine.run_sources(source_names, date_str, sources_config)
 
         # 导出
-        engine.export(date_str)
+        engine.export(date_str, import_to_db=not args.no_db)
 
         # 打印摘要
         engine.print_summary()
@@ -317,7 +356,7 @@ async def run_db_status():
         return
 
     with db.session() as session:
-        tables = ["matches", "odds", "teams", "leagues"]
+        tables = ["matches", "odds", "odds_history", "teams", "leagues"]
         print("\n数据库状态:")
         print("-" * 40)
         for table in tables:
@@ -341,6 +380,35 @@ async def run_db_status():
         for row in result:
             print(f"  {row[0]:20s}: {row[1]:6d}")
         print("-" * 40)
+
+
+async def run_schedule(interval_minutes: int = 30, all_sources: bool = False,
+                       headless_str: str = "true"):
+    """启动定时采集调度"""
+    from crawler.core.scheduler import run_scheduler
+
+    sources = None
+    if not all_sources:
+        sources = ["sofascore", "fotmob"]
+
+    headless = headless_str.lower() == "true"
+    print(f"\n定时采集已启动: 每 {interval_minutes} 分钟一次")
+    print(f"数据源: {', '.join(sources or ['全部'])}")
+    print("按 Ctrl+C 停止\n")
+    await run_scheduler(interval_minutes=interval_minutes, sources=sources,
+                        headless=headless)
+
+
+def run_api(port: int = 8000):
+    """启动 FastAPI 数据接口"""
+    try:
+        from crawler.api.server import start_api
+        print(f"\nFastAPI 数据接口: http://localhost:{port}")
+        print(f"API 文档: http://localhost:{port}/docs\n")
+        start_api(port=port)
+    except ImportError as e:
+        print(f"FastAPI 未安装，请运行: pip install fastapi uvicorn")
+        print(f"错误详情: {e}")
 
 
 if __name__ == "__main__":

@@ -137,3 +137,32 @@ class Odds(Base):
 
     def __repr__(self):
         return f"<Odds {self.match_id} H:{self.odds_home} D:{self.odds_draw} A:{self.odds_away}>"
+
+
+class OddsHistory(Base):
+    """赔率历史变化表 — 每次采集时记录赔率快照"""
+    __tablename__ = "odds_history"
+
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    match_id = Column(String(16), ForeignKey("matches.match_id"), nullable=False, index=True)
+    source = Column(String(50), nullable=False)
+    bookmaker = Column(String(100), default="")
+    odds_home = Column(Float, nullable=True)
+    odds_draw = Column(Float, nullable=True)
+    odds_away = Column(Float, nullable=True)
+    asian_handicap = Column(String(50), default="")
+    over_under = Column(String(50), default="")
+    snapshot_at = Column(DateTime, nullable=False, index=True)
+
+    match_rel = relationship("Match", back_populates="odds_history")
+
+    __table_args__ = (
+        Index("ix_odds_history_match_snapshot", "match_id", "snapshot_at"),
+    )
+
+    def __repr__(self):
+        return f"<OddsHistory {self.match_id} @ {self.snapshot_at}>"
+
+
+# 补充 Match 的 odds_history relationship
+Match.odds_history = relationship("OddsHistory", back_populates="match_rel", cascade="all, delete-orphan")

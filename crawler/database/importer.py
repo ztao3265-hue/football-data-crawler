@@ -11,7 +11,7 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 
 from crawler.database.connection import get_db
 from crawler.database.schema import (
-    Match, Odds, Team, League,
+    Match, Odds, OddsHistory, Team, League,
     generate_match_id, generate_team_id, generate_league_id, Base
 )
 from crawler.core.logger import get_logger
@@ -173,7 +173,7 @@ class MatchImporter:
         self._import_odds(session, match.match_id, source, data)
 
     def _import_odds(self, session: Session, match_id: str, source: str, data: dict):
-        """导入赔率数据（一个来源一条记录）"""
+        """导入赔率数据（一个来源一条记录），赔率变化时写入历史表"""
         odds_home = data.get("odds_home", "")
         odds_draw = data.get("odds_draw", "")
         odds_away = data.get("odds_away", "")
@@ -182,29 +182,79 @@ class MatchImporter:
         if not odds_home and not odds_draw and not odds_away:
             return
 
-        # 检查该来源的赔率是否已存在
-        existing_odds = session.execute(
+        asian = str(data.get("asian_handicap", ""))
+        over_under = str(data.get("over_under", ""))
+        bookmaker = str(data.get("odds_bookmaker", ""))
+
+        def _parse_float(v):
+            try:
+                return float(v) if v else None
+            except (ValueError, TypeError):
+                return None
+
+        h = _parse_float(odds_home)
+        d = _parse_float(odds_draw)
+        a = _parse_float(odds_away)
+
+        now = datetime.now(tz=timezone.utc).replace(tzinfo=None)
+
+        existing = session.execute(
             select(Odds).where(
                 Odds.match_id == match_id,
                 Odds.source == source,
             )
         ).scalar_one_or_none()
 
-        if not existing_odds:
-            try:
-                odds = Odds(
-                    match_id=match_id,
-                    source=source,
-                    odds_home=float(odds_home) if odds_home else None,
-                    odds_draw=float(odds_draw) if odds_draw else None,
-                    odds_away=float(odds_away) if odds_away else None,
-                    asian_handicap=str(data.get("asian_handicap", "")),
-                    over_under=str(data.get("over_under", "")),
-                    collected_at=datetime.now(tz=timezone.utc).replace(tzinfo=None),
-                )
-                session.add(odds)
-            except (ValueError, TypeError):
-                pass
+        if existing:
+            # 检测赔率是否变化
+            changed = (
+                existing.odds_home != h or
+                existing.odds_draw != d or
+                existing.odds_away != a or
+                existing.asian_handicap != asian or
+                existing.over_under != over_under
+            )
+            if changed:
+                # 记录旧值到历史表
+                self._record_odds_history(session, existing, now)
+                # 更新为新的赔率值
+                existing.odds_home = h
+                existing.odds_draw = d
+                existing.odds_away = a
+                existing.asian_handicap = asian
+                existing.over_under = over_under
+                existing.bookmaker = bookmaker or existing.bookmaker
+                existing.collected_at = now
+        else:
+            odds = Odds(
+                match_id=match_id,
+                source=source,
+                bookmaker=bookmaker,
+                odds_home=h,
+                odds_draw=d,
+                odds_away=a,
+                asian_handicap=asian,
+                over_under=over_under,
+                collected_at=now,
+            )
+            session.add(odds)
+            # 首次入库也记录历史
+            self._record_odds_history(session, odds, now)
+
+    def _record_odds_history(self, session: Session, odds: Odds, snapshot_at):
+        """记录赔率快照到历史表"""
+        hist = OddsHistory(
+            match_id=odds.match_id,
+            source=odds.source,
+            bookmaker=odds.bookmaker or "",
+            odds_home=odds.odds_home,
+            odds_draw=odds.odds_draw,
+            odds_away=odds.odds_away,
+            asian_handicap=odds.asian_handicap or "",
+            over_under=odds.over_under or "",
+            snapshot_at=snapshot_at,
+        )
+        session.add(hist)
 
     def _ensure_league(self, session: Session, league_id: str, name: str, source: str):
         """确保联赛记录存在"""

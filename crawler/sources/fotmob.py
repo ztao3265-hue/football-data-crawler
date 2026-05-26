@@ -1,5 +1,6 @@
-"""FotMob 数据采集器"""
+"""FotMob 数据采集器 - 含欧赔/亚盘/大小球赔率"""
 
+import asyncio
 from datetime import datetime
 from typing import List
 
@@ -9,6 +10,9 @@ from crawler.sources.base import BaseCrawler
 from crawler.core.models import MatchData
 from crawler.browser.interceptor import APIInterceptor
 from crawler.utils.helpers import save_json, save_text
+
+ODDS_SEMAPHORE = asyncio.Semaphore(5)
+ODDS_FETCH_ENABLED = True
 
 
 class FotmobCrawler(BaseCrawler):
@@ -24,13 +28,11 @@ class FotmobCrawler(BaseCrawler):
         self.logger.info(f"开始采集 FotMob 数据: {date_str}")
         matches = []
 
-        # API 采集
         api_matches = await self._collect_via_api(date_str)
         if api_matches:
             matches.extend(api_matches)
             self.logger.info(f"API 采集到 {len(api_matches)} 条数据")
 
-        # 浏览器采集
         browser_matches = await self._collect_via_browser(date_str)
         if browser_matches:
             matches.extend(browser_matches)
@@ -43,7 +45,7 @@ class FotmobCrawler(BaseCrawler):
         return matches
 
     async def _collect_via_api(self, date_str: str) -> List[MatchData]:
-        """通过 FotMob API 采集"""
+        """通过 FotMob API 采集（含赔率）"""
         matches = []
         url = f"{self.api_base}/matches?date={date_str}"
 
@@ -63,17 +65,91 @@ class FotmobCrawler(BaseCrawler):
             data = await self.safe_request(_fetch)
             leagues = data.get("leagues", [])
 
+            match_map = {}
             for league in leagues:
-                league_matches = league.get("matches", [])
-                for m in league_matches:
+                for m in league.get("matches", []):
                     match = self._parse_match(m, league)
                     if match:
+                        match_id = str(m.get("id", ""))
                         matches.append(match)
+                        if match_id:
+                            match_map[match_id] = match
+
+            # 批量获取赔率
+            if ODDS_FETCH_ENABLED and match_map:
+                odds_count = await self._fetch_odds_batch(match_map)
+                self.logger.info(f"赔率采集: {odds_count}/{len(match_map)} 场比赛有赔率数据")
 
         except Exception as e:
             self.logger.error(f"FotMob API 请求失败: {e}")
 
         return matches
+
+    async def _fetch_odds_batch(self, match_map: dict) -> int:
+        """批量并发获取 matchDetails 中的赔率"""
+        count = 0
+
+        async def _fetch_one(match_id, match):
+            nonlocal count
+            async with ODDS_SEMAPHORE:
+                try:
+                    details = await self._fetch_match_details(match_id)
+                    if details:
+                        self._apply_odds(match, details)
+                        return True
+                except Exception:
+                    pass
+            return False
+
+        tasks = [_fetch_one(mid, m) for mid, m in match_map.items()]
+        results = await asyncio.gather(*tasks)
+        return sum(1 for r in results if r)
+
+    async def _fetch_match_details(self, match_id: str) -> dict | None:
+        """获取单场比赛详情（含赔率）"""
+        url = f"{self.api_base}/matchDetails?matchId={match_id}"
+
+        async def _fetch():
+            async with httpx.AsyncClient(timeout=15) as client:
+                headers = {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                    "Accept": "application/json",
+                }
+                resp = await client.get(url, headers=headers)
+                if resp.status_code == 404:
+                    return None
+                resp.raise_for_status()
+                return resp.json()
+
+        try:
+            return await self.safe_request(_fetch)
+        except Exception:
+            return None
+
+    def _apply_odds(self, match: MatchData, details: dict):
+        """从 matchDetails 中提取赔率数据"""
+        content = details.get("content", {}) or {}
+        odds = content.get("odds", {}) or {}
+        if not odds:
+            return
+
+        # 欧赔
+        main_odds = odds.get("main", {}) or {}
+        if main_odds:
+            match.odds_home = str(main_odds.get("home", ""))
+            match.odds_draw = str(main_odds.get("draw", ""))
+            match.odds_away = str(main_odds.get("away", ""))
+            match.odds_bookmaker = str(main_odds.get("provider", {}).get("name", "") if isinstance(main_odds.get("provider"), dict) else "")
+
+        # 亚盘
+        asian = odds.get("asianHandicap", {}) or {}
+        if isinstance(asian, dict):
+            match.asian_handicap = str(asian.get("line", asian.get("handicap", "")))
+
+        # 大小球
+        ou = odds.get("overUnder", {}) or {}
+        if isinstance(ou, dict):
+            match.over_under = str(ou.get("line", ou.get("total", "")))
 
     async def _collect_via_browser(self, date_str: str) -> List[MatchData]:
         """通过浏览器采集"""
@@ -99,7 +175,7 @@ class FotmobCrawler(BaseCrawler):
                 page, f"fotmob_{date_str}_{datetime.now():%H%M%S}.png"
             )
 
-            # 解析 API 响应
+            seen_ids = set()
             api_responses = interceptor.get_filtered_responses("matches")
             for resp in api_responses:
                 body = resp.get("body", {})
@@ -107,6 +183,10 @@ class FotmobCrawler(BaseCrawler):
                     leagues = body.get("leagues", [])
                     for league in leagues:
                         for m in league.get("matches", []):
+                            mid = str(m.get("id", ""))
+                            if mid in seen_ids:
+                                continue
+                            seen_ids.add(mid)
                             match = self._parse_match(m, league)
                             if match:
                                 matches.append(match)
@@ -123,7 +203,7 @@ class FotmobCrawler(BaseCrawler):
         return matches
 
     def _parse_match(self, match: dict, league: dict = None) -> MatchData | None:
-        """解析比赛数据"""
+        """解析比赛数据（不含赔率，赔率后续通过 _apply_odds 填充）"""
         try:
             home = match.get("home", {})
             away = match.get("away", {})
@@ -147,9 +227,6 @@ class FotmobCrawler(BaseCrawler):
 
             kickoff = match.get("utcTime", "") or match.get("time", "")
 
-            odds = match.get("odds", {}) or {}
-            main_odds = odds.get("main", {}) if odds else {}
-
             return MatchData(
                 source="fotmob",
                 league=league_name,
@@ -157,11 +234,6 @@ class FotmobCrawler(BaseCrawler):
                 away_team=away_name,
                 kickoff_time=kickoff,
                 score=score,
-                odds_home=str(main_odds.get("home", "")),
-                odds_draw=str(main_odds.get("draw", "")),
-                odds_away=str(main_odds.get("away", "")),
-                asian_handicap=str(odds.get("asianHandicap", {}).get("line", "") if odds else ""),
-                over_under=str(odds.get("overUnder", {}).get("line", "") if odds else ""),
             )
         except Exception as e:
             self.logger.warning(f"解析 FotMob 比赛失败: {e}")

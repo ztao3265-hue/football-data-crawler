@@ -41,5 +41,11 @@
     "pool_size": 5,
     "max_overflow": 10,
     "auto_import_clean": true
+  },
+  "scheduler": {
+    "enabled": true,
+    "interval_minutes": 30,
+    "sources": ["sofascore", "fotmob"],
+    "auto_import": true
   }
 }
