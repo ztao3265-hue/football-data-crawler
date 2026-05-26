@@ -99,10 +99,14 @@ class CrawlerEngine:
         return self.results
 
     def export(self, date_str: str):
-        """导出所有采集数据"""
+        """导出所有采集数据（含清洗版本）"""
         date_str = date_str or datetime.now().strftime("%Y-%m-%d")
         if self.all_matches:
             self.exporter.export(self.all_matches, date_str)
+            # 清洗导出
+            from crawler.core.cleaner import export_clean
+            raw_data = [m.to_dict() if hasattr(m, "to_dict") else m for m in self.all_matches]
+            export_clean(raw_data, output_dir=self.exporter.output_dir, date_str=date_str)
         if self.results:
             self.exporter.export_summary(self.results, date_str)
 
