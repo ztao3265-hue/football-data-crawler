@@ -29,6 +29,8 @@ exports/*.csv
 exports/*.xlsx
 data/raw/*
 data/clean/*
+data/processed/*
+data/reports/*
 !data/raw/.gitkeep
 !data/clean/.gitkeep
 
