@@ -1,0 +1,759 @@
+{
+  "report_time": "2026-05-27T16:55:36.999097",
+  "database": "D:\\Projects\\football-data-crawler\\data\\football_history.db",
+  "summary": {
+    "database_size_mb": 39.1,
+    "total_matches": 8612,
+    "trainable_matches": 8577,
+    "trainable_rate": 99.6,
+    "missing_score_rate": 0.35,
+    "missing_odds_rate": 0.01,
+    "data_integrity_score": "A+ (99.9%)",
+    "issues": {
+      "critical": 1,
+      "warning": 1,
+      "info": 4,
+      "total": 6
+    },
+    "tables": {
+      "leagues": 8,
+      "teams": 256,
+      "matches": 8612,
+      "odds_europe": 102858,
+      "odds_asian": 62932,
+      "odds_over_under": 82828,
+      "match_features": 8612
+    },
+    "leak_risk": "LOW — 数据为批量历史导入，标签仅用于训练"
+  },
+  "checks": {
+    "check_basic_completeness": {
+      "total_matches": 8612,
+      "match_id_unique": 0,
+      "kickoff_time_null": 0,
+      "home_team_null": 0,
+      "away_team_null": 0,
+      "league_null": 0,
+      "home_score_null": 30,
+      "away_score_null": 30,
+      "ft_result_empty": 5,
+      "season_empty": 0
+    },
+    "check_europe_odds_completeness": {
+      "total_matches": 8612,
+      "by_bookmaker": {
+        "Bet365": {
+          "opening_odds_home": 0,
+          "opening_odds_draw": 0,
+          "opening_odds_away": 0,
+          "closing_odds_home": 0,
+          "closing_odds_draw": 0,
+          "closing_odds_away": 0,
+          "opening_match_count": 8609,
+          "closing_match_count": 8609,
+          "opening_coverage": 100.0,
+          "closing_coverage": 100.0
+        },
+        "Macau": {
+          "opening_odds_home": 0,
+          "opening_odds_draw": 0,
+          "opening_odds_away": 0,
+          "closing_odds_home": 0,
+          "closing_odds_draw": 0,
+          "closing_odds_away": 0,
+          "opening_match_count": 8585,
+          "closing_match_count": 8585,
+          "opening_coverage": 99.7,
+          "closing_coverage": 99.7
+        },
+        "Betfair": {
+          "opening_odds_home": 0,
+          "opening_odds_draw": 0,
+          "opening_odds_away": 0,
+          "closing_odds_home": 0,
+          "closing_odds_draw": 0,
+          "closing_odds_away": 0,
+          "opening_match_count": 8552,
+          "closing_match_count": 8552,
+          "opening_coverage": 99.3,
+          "closing_coverage": 99.3
+        },
+        "Crown": {
+          "opening_odds_home": 0,
+          "opening_odds_draw": 0,
+          "opening_odds_away": 0,
+          "closing_odds_home": 0,
+          "closing_odds_draw": 0,
+          "closing_odds_away": 0,
+          "opening_match_count": 8611,
+          "closing_match_count": 8611,
+          "opening_coverage": 100.0,
+          "closing_coverage": 100.0
+        },
+        "Ladbrokes": {
+          "opening_odds_home": 0,
+          "opening_odds_draw": 0,
+          "opening_odds_away": 0,
+          "closing_odds_home": 0,
+          "closing_odds_draw": 0,
+          "closing_odds_away": 0,
+          "opening_match_count": 8608,
+          "closing_match_count": 8608,
+          "opening_coverage": 100.0,
+          "closing_coverage": 100.0
+        },
+        "William Hill": {
+          "opening_odds_home": 0,
+          "opening_odds_draw": 0,
+          "opening_odds_away": 0,
+          "closing_odds_home": 0,
+          "closing_odds_draw": 0,
+          "closing_odds_away": 0,
+          "opening_match_count": 8464,
+          "closing_match_count": 8464,
+          "opening_coverage": 98.3,
+          "closing_coverage": 98.3
+        }
+      }
+    },
+    "check_asian_odds_completeness": {
+      "total_matches": 8612,
+      "by_bookmaker": {
+        "Bet365": {
+          "opening_match_count": 8577,
+          "opening_coverage": 99.6,
+          "opening_handicap_null": 0,
+          "opening_water_null": 8126,
+          "closing_match_count": 8577,
+          "closing_coverage": 99.6,
+          "closing_handicap_null": 0,
+          "closing_water_null": 0
+        },
+        "Macau": {
+          "opening_match_count": 8574,
+          "opening_coverage": 99.6,
+          "opening_handicap_null": 0,
+          "opening_water_null": 8090,
+          "closing_match_count": 8574,
+          "closing_coverage": 99.6,
+          "closing_handicap_null": 0,
+          "closing_water_null": 0
+        },
+        "Crown": {
+          "opening_match_count": 8458,
+          "opening_coverage": 98.2,
+          "opening_handicap_null": 0,
+          "opening_water_null": 7891,
+          "closing_match_count": 8458,
+          "closing_coverage": 98.2,
+          "closing_handicap_null": 0,
+          "closing_water_null": 0
+        },
+        "Ladbrokes": {
+          "opening_match_count": 1247,
+          "opening_coverage": 14.5,
+          "opening_handicap_null": 0,
+          "opening_water_null": 831,
+          "closing_match_count": 1247,
+          "closing_coverage": 14.5,
+          "closing_handicap_null": 0,
+          "closing_water_null": 0
+        },
+        "William Hill": {
+          "opening_match_count": 4610,
+          "opening_coverage": 53.5,
+          "opening_handicap_null": 0,
+          "opening_water_null": 4269,
+          "closing_match_count": 4610,
+          "closing_coverage": 53.5,
+          "closing_handicap_null": 0,
+          "closing_water_null": 0
+        }
+      }
+    },
+    "check_over_under_completeness": {
+      "total_matches": 8612,
+      "by_bookmaker": {
+        "Bet365": {
+          "opening_match_count": 8581,
+          "opening_coverage": 99.6,
+          "opening_handicap_null": 0,
+          "closing_match_count": 8581,
+          "closing_coverage": 99.6,
+          "closing_handicap_null": 0
+        },
+        "Macau": {
+          "opening_match_count": 8586,
+          "opening_coverage": 99.7,
+          "opening_handicap_null": 0,
+          "closing_match_count": 8586,
+          "closing_coverage": 99.7,
+          "closing_handicap_null": 0
+        },
+        "Crown": {
+          "opening_match_count": 8611,
+          "opening_coverage": 100.0,
+          "opening_handicap_null": 0,
+          "closing_match_count": 8611,
+          "closing_coverage": 100.0,
+          "closing_handicap_null": 0
+        },
+        "Ladbrokes": {
+          "opening_match_count": 7662,
+          "opening_coverage": 89.0,
+          "opening_handicap_null": 0,
+          "closing_match_count": 7662,
+          "closing_coverage": 89.0,
+          "closing_handicap_null": 0
+        },
+        "William Hill": {
+          "opening_match_count": 7974,
+          "opening_coverage": 92.6,
+          "opening_handicap_null": 0,
+          "closing_match_count": 7974,
+          "closing_coverage": 92.6,
+          "closing_handicap_null": 0
+        }
+      }
+    },
+    "check_logic_consistency": {
+      "score_vs_result": {
+        "total_compared": 8582,
+        "inconsistent": 3,
+        "rate": 0.03
+      },
+      "anomalous_implied_prob": 99,
+      "half_full_count": 8483,
+      "total_goals_mismatch": 2
+    },
+    "check_temporal_safety": {
+      "season_time_range": [
+        {
+          "season": "2021",
+          "earliest": "2021-08-04 01:00:00",
+          "latest": "2022-07-29 02:30:00",
+          "count": 1188
+        },
+        {
+          "season": "2022",
+          "earliest": "2022-08-03 01:00:00",
+          "latest": "2023-07-28 03:00:00",
+          "count": 2033
+        },
+        {
+          "season": "2023",
+          "earliest": "2023-08-02 01:30:00",
+          "latest": "2024-07-27 02:15:00",
+          "count": 2252
+        },
+        {
+          "season": "2024",
+          "earliest": "2024-08-01 02:45:00",
+          "latest": "2025-07-31 02:45:00",
+          "count": 2069
+        },
+        {
+          "season": "2025",
+          "earliest": "2026-01-02 01:30:00",
+          "latest": "2026-06-01 03:00:00",
+          "count": 1070
+        }
+      ],
+      "future_matches": 2,
+      "season_range_mismatch": 1,
+      "features_with_labels": 8580,
+      "temporal_safety_note": "历史数据中的赔率来自赛前采集，不存在未来数据泄露。match_features 表的标签(home_win/draw/away_win)基于比赛结果，仅应在模型训练阶段使用，不应作为选股/特征输入。",
+      "collection_time_range": {
+        "min": "2026-05-27T16:38:39.346207",
+        "max": "2026-05-27T16:38:42.281883"
+      },
+      "collected_before_match": 2
+    },
+    "check_data_distribution": {
+      "league_distribution": [
+        {
+          "name": "英超",
+          "code": "EPL",
+          "count": 1530
+        },
+        {
+          "name": "西甲",
+          "code": "LLG",
+          "count": 1524
+        },
+        {
+          "name": "意甲",
+          "code": "ISA",
+          "count": 1522
+        },
+        {
+          "name": "法甲",
+          "code": "FL1",
+          "count": 1375
+        },
+        {
+          "name": "德甲",
+          "code": "BUN",
+          "count": 1233
+        },
+        {
+          "name": "欧冠",
+          "code": "UCL",
+          "count": 782
+        },
+        {
+          "name": "欧罗巴",
+          "code": "UEL",
+          "count": 646
+        }
+      ],
+      "season_distribution": [
+        {
+          "season": "2021",
+          "count": 1188
+        },
+        {
+          "season": "2022",
+          "count": 2033
+        },
+        {
+          "season": "2023",
+          "count": 2252
+        },
+        {
+          "season": "2024",
+          "count": 2069
+        },
+        {
+          "season": "2025",
+          "count": 1070
+        }
+      ],
+      "result_distribution": [
+        {
+          "result": "胜",
+          "count": 3794
+        },
+        {
+          "result": "负",
+          "count": 2658
+        },
+        {
+          "result": "平",
+          "count": 2128
+        },
+        {
+          "result": "-",
+          "count": 25
+        },
+        {
+          "result": "延期",
+          "count": 2
+        }
+      ],
+      "odds_stats": {
+        "Bet365": {
+          "avg_home": 2.831,
+          "avg_draw": 4.12,
+          "avg_away": 4.705,
+          "min_home": 1.0,
+          "max_home": 501.0
+        },
+        "Macau": {
+          "avg_home": 2.528,
+          "avg_draw": 3.896,
+          "avg_away": 3.934,
+          "min_home": 1.01,
+          "max_home": 20.0
+        },
+        "Betfair": {
+          "avg_home": 2.928,
+          "avg_draw": 4.321,
+          "avg_away": 5.005,
+          "min_home": 1.06,
+          "max_home": 48.0
+        },
+        "Crown": {
+          "avg_home": 2.736,
+          "avg_draw": 4.133,
+          "avg_away": 4.42,
+          "min_home": 1.04,
+          "max_home": 29.0
+        },
+        "Ladbrokes": {
+          "avg_home": 2.709,
+          "avg_draw": 3.955,
+          "avg_away": 4.451,
+          "min_home": 1.04,
+          "max_home": 34.0
+        },
+        "William Hill": {
+          "avg_home": 2.81,
+          "avg_draw": 4.087,
+          "avg_away": 4.561,
+          "min_home": 1.0,
+          "max_home": 101.0
+        }
+      },
+      "asian_handicap_top20": [
+        {
+          "handicap": "平手/半球",
+          "count": 1236
+        },
+        {
+          "handicap": "平手",
+          "count": 1096
+        },
+        {
+          "handicap": "半球",
+          "count": 1068
+        },
+        {
+          "handicap": "受平手/半球",
+          "count": 853
+        },
+        {
+          "handicap": "半球/一球",
+          "count": 787
+        },
+        {
+          "handicap": "受半球",
+          "count": 622
+        },
+        {
+          "handicap": "一球",
+          "count": 604
+        },
+        {
+          "handicap": "一球/球半",
+          "count": 527
+        },
+        {
+          "handicap": "受半球/一球",
+          "count": 400
+        },
+        {
+          "handicap": "球半",
+          "count": 344
+        },
+        {
+          "handicap": "受一球",
+          "count": 240
+        },
+        {
+          "handicap": "球半/两球",
+          "count": 196
+        },
+        {
+          "handicap": "受一球/球半",
+          "count": 167
+        },
+        {
+          "handicap": "两球",
+          "count": 137
+        },
+        {
+          "handicap": "受球半",
+          "count": 82
+        },
+        {
+          "handicap": "两球/两球半",
+          "count": 77
+        },
+        {
+          "handicap": "受球半/两球",
+          "count": 48
+        },
+        {
+          "handicap": "两球半",
+          "count": 38
+        },
+        {
+          "handicap": "两球半/三球",
+          "count": 20
+        },
+        {
+          "handicap": "受两球",
+          "count": 17
+        }
+      ],
+      "over_under_top20": [
+        {
+          "handicap": "2.5",
+          "count": 2386
+        },
+        {
+          "handicap": "2.5/3",
+          "count": 2198
+        },
+        {
+          "handicap": "2/2.5",
+          "count": 1352
+        },
+        {
+          "handicap": "3",
+          "count": 1274
+        },
+        {
+          "handicap": "3/3.5",
+          "count": 554
+        },
+        {
+          "handicap": "2",
+          "count": 352
+        },
+        {
+          "handicap": "3.5",
+          "count": 297
+        },
+        {
+          "handicap": "3.5/4",
+          "count": 95
+        },
+        {
+          "handicap": "4",
+          "count": 37
+        },
+        {
+          "handicap": "1.5/2",
+          "count": 30
+        },
+        {
+          "handicap": "4/4.5",
+          "count": 4
+        },
+        {
+          "handicap": "6.5",
+          "count": 1
+        },
+        {
+          "handicap": "4.5",
+          "count": 1
+        }
+      ],
+      "score_top20": [
+        {
+          "score": "1-1",
+          "count": 1033
+        },
+        {
+          "score": "1-0",
+          "count": 816
+        },
+        {
+          "score": "2-1",
+          "count": 732
+        },
+        {
+          "score": "0-1",
+          "count": 600
+        },
+        {
+          "score": "2-0",
+          "count": 593
+        },
+        {
+          "score": "1-2",
+          "count": 586
+        },
+        {
+          "score": "0-0",
+          "count": 524
+        },
+        {
+          "score": "2-2",
+          "count": 470
+        },
+        {
+          "score": "0-2",
+          "count": 433
+        },
+        {
+          "score": "3-1",
+          "count": 367
+        },
+        {
+          "score": "3-0",
+          "count": 337
+        },
+        {
+          "score": "1-3",
+          "count": 242
+        },
+        {
+          "score": "3-2",
+          "count": 228
+        },
+        {
+          "score": "0-3",
+          "count": 207
+        },
+        {
+          "score": "2-3",
+          "count": 205
+        },
+        {
+          "score": "4-0",
+          "count": 169
+        },
+        {
+          "score": "4-1",
+          "count": 143
+        },
+        {
+          "score": "1-4",
+          "count": 102
+        },
+        {
+          "score": "4-2",
+          "count": 96
+        },
+        {
+          "score": "3-3",
+          "count": 91
+        }
+      ]
+    },
+    "check_missing_rates": {
+      "matches": {
+        "kickoff_time": {
+          "null_count": 0,
+          "missing_rate": 0.0
+        },
+        "home_score": {
+          "null_count": 30,
+          "missing_rate": 0.35
+        },
+        "away_score": {
+          "null_count": 30,
+          "missing_rate": 0.35
+        },
+        "score_display": {
+          "null_count": 0,
+          "missing_rate": 0.0
+        },
+        "half_time_score": {
+          "null_count": 0,
+          "missing_rate": 0.0
+        },
+        "total_goals": {
+          "null_count": 129,
+          "missing_rate": 1.5
+        },
+        "half_full_result": {
+          "null_count": 5,
+          "missing_rate": 0.06
+        },
+        "ft_result": {
+          "null_count": 5,
+          "missing_rate": 0.06
+        },
+        "round": {
+          "null_count": 0,
+          "missing_rate": 0.0
+        },
+        "home_ranking": {
+          "null_count": 8612,
+          "missing_rate": 100.0
+        },
+        "away_ranking": {
+          "null_count": 8612,
+          "missing_rate": 100.0
+        }
+      },
+      "odds_europe": {
+        "odds_home": {
+          "null_count": 0,
+          "missing_rate": 0.0
+        },
+        "odds_draw": {
+          "null_count": 0,
+          "missing_rate": 0.0
+        },
+        "odds_away": {
+          "null_count": 0,
+          "missing_rate": 0.0
+        }
+      },
+      "odds_asian": {
+        "high_water": {
+          "null_count": 29827,
+          "missing_rate": 47.4
+        },
+        "handicap": {
+          "null_count": 0,
+          "missing_rate": 0.0
+        },
+        "low_water": {
+          "null_count": 29759,
+          "missing_rate": 47.29
+        }
+      },
+      "odds_over_under": {
+        "over_water": {
+          "null_count": 36925,
+          "missing_rate": 44.58
+        },
+        "handicap": {
+          "null_count": 0,
+          "missing_rate": 0.0
+        },
+        "under_water": {
+          "null_count": 36946,
+          "missing_rate": 44.61
+        }
+      },
+      "ai_trainable": {
+        "count": 8577,
+        "rate": 99.59,
+        "note": "隐含概率 + 标签均完整的比赛（可用于 AI 训练）"
+      }
+    },
+    "check_duplicate_detection": {
+      "match_id_duplicates": 0,
+      "potential_same_match": 0,
+      "odds_europe_duplicates": 0,
+      "odds_asian_duplicates": 0,
+      "odds_over_under_duplicates": 0
+    }
+  },
+  "issues": [
+    {
+      "severity": "info",
+      "category": "basic",
+      "detail": "Home Score Null: 30 条 (0.3%)",
+      "count": 30
+    },
+    {
+      "severity": "info",
+      "category": "basic",
+      "detail": "Away Score Null: 30 条 (0.3%)",
+      "count": 30
+    },
+    {
+      "severity": "info",
+      "category": "basic",
+      "detail": "Ft Result Empty: 5 条 (0.1%)",
+      "count": 5
+    },
+    {
+      "severity": "critical",
+      "category": "logic",
+      "detail": "比分与赛果不一致: 3 场",
+      "count": 3
+    },
+    {
+      "severity": "info",
+      "category": "temporal",
+      "detail": "未来比赛: 2 场 (可能在赛程中)",
+      "count": 2
+    },
+    {
+      "severity": "warning",
+      "category": "temporal",
+      "detail": "2 场比赛 collected_at 早于比赛时间",
+      "count": 0
+    }
+  ],
+  "stats": {}
+}

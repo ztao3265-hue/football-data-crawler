@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>数据质量报告 — 2026-05-27 16:55</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f2f5; color: #1a1a2e; }
+.header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; padding: 32px 48px; }
+.header h1 { font-size: 24px; margin-bottom: 8px; }
+.header p { opacity: 0.8; font-size: 14px; }
+.container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
+.card { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+.card h2 { font-size: 16px; color: #16213e; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #e8e8e8; }
+.stat-big { font-size: 36px; font-weight: 700; color: #0f3460; }
+.stat-label { font-size: 13px; color: #666; margin-top: 4px; }
+.good { color: #10b981; } .warn { color: #f59e0b; } .bad { color: #ef4444; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+.badge-ok { background: #d1fae5; color: #065f46; }
+.badge-warn { background: #fef3c7; color: #92400e; }
+.badge-err { background: #fee2e2; color: #991b1b; }
+.badge-info { background: #dbeafe; color: #1e40af; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #e8e8e8; }
+th { background: #f8f9fa; font-weight: 600; color: #555; }
+tr:hover { background: #f8f9fa; }
+.progress-bar { background: #e8e8e8; border-radius: 4px; height: 8px; overflow: hidden; }
+.progress-fill { background: linear-gradient(90deg, #10b981, #34d399); height: 100%; border-radius: 4px; }
+.section { margin-bottom: 24px; }
+.issue-critical { border-left: 3px solid #ef4444; padding-left: 8px; margin: 4px 0; font-size: 13px; }
+.issue-warning { border-left: 3px solid #f59e0b; padding-left: 8px; margin: 4px 0; font-size: 13px; }
+.issue-info { border-left: 3px solid #3b82f6; padding-left: 8px; margin: 4px 0; font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="header">
+<h1>足球数据质量验证报告</h1>
+<p>生成时间: 2026-05-27T16:55:36.999097 | 数据库: football_history.db (39.1 MB)</p>
+</div>
+
+<div class="container">
+
+<!-- Key Metrics -->
+<div class="grid-4">
+<div class="card">
+  <div class="stat-big">8,612</div>
+  <div class="stat-label">总比赛数</div>
+</div>
+<div class="card">
+  <div class="stat-big">8,577</div>
+  <div class="stat-label">可训练比赛 <span class="badge badge-ok">99.6%</span></div>
+</div>
+<div class="card">
+  <div class="stat-big">A+</div>
+  <div class="stat-label">完整性评分</div>
+</div>
+<div class="card">
+  <div class="stat-big" style="color:#f59e0b">LOW</div>
+  <div class="stat-label">泄露风险</div>
+</div>
+</div>
+
+<!-- Issues Summary -->
+<div class="grid-3">
+<div class="card" style="text-align:center">
+  <div class="stat-big bad">1</div>
+  <div class="stat-label">严重问题</div>
+</div>
+<div class="card" style="text-align:center">
+  <div class="stat-big warn">1</div>
+  <div class="stat-label">警告</div>
+</div>
+<div class="card" style="text-align:center">
+  <div class="stat-big" style="color:#3b82f6">4</div>
+  <div class="stat-label">信息</div>
+</div>
+</div>
+
+<!-- Database Tables -->
+<div class="section">
+<div class="card">
+<h2>数据库表统计</h2>
+<table>
+<tr><th>表名</th><th>行数</th></tr>
+<tr><td>leagues</td><td>8</td></tr><tr><td>teams</td><td>256</td></tr><tr><td>matches</td><td>8,612</td></tr><tr><td>odds_europe</td><td>102,858</td></tr><tr><td>odds_asian</td><td>62,932</td></tr><tr><td>odds_over_under</td><td>82,828</td></tr><tr><td>match_features</td><td>8,612</td></tr>
+</table>
+</div>
+</div>
+
+<!-- Completeness -->
+<div class="section">
+<div class="card">
+<h2>基础完整性</h2>
+<table><tr><th>字段</th><th>状态</th></tr><tr><td>match_id 唯一</td><td><span class="badge badge-ok">OK</span></td></tr><tr><td>开球时间缺失</td><td>0 <span class='badge badge-ok'>0.0%</span></td></tr><tr><td>主队缺失</td><td>0 <span class='badge badge-ok'>0.0%</span></td></tr><tr><td>客队缺失</td><td>0 <span class='badge badge-ok'>0.0%</span></td></tr><tr><td>联赛缺失</td><td>0 <span class='badge badge-ok'>0.0%</span></td></tr><tr><td>主队比分缺失</td><td>30 <span class='badge badge-ok'>0.3%</span></td></tr><tr><td>客队比分缺失</td><td>30 <span class='badge badge-ok'>0.3%</span></td></tr><tr><td>赛果缺失</td><td>5 <span class='badge badge-ok'>0.1%</span></td></tr></table>
+</div>
+</div>
+
+<!-- Odds Coverage -->
+<div class="grid-2">
+<div class="card">
+<h2>欧赔覆盖率</h2>
+<table><tr><th>博彩公司</th><th>开盘覆盖率</th><th>收盘覆盖率</th></tr><tr><td>Bet365</td><td>100.0%</td><td>100.0%</td></tr><tr><td>Macau</td><td>99.7%</td><td>99.7%</td></tr><tr><td>Betfair</td><td>99.3%</td><td>99.3%</td></tr><tr><td>Crown</td><td>100.0%</td><td>100.0%</td></tr><tr><td>Ladbrokes</td><td>100.0%</td><td>100.0%</td></tr><tr><td>William Hill</td><td>98.3%</td><td>98.3%</td></tr></table>
+</div>
+<div class="card">
+<h2>亚盘 & 大小球覆盖率</h2>
+<table><tr><th>博彩公司</th><th>亚盘开盘</th><th>亚盘收盘</th><th>大小球开盘</th><th>大小球收盘</th></tr><tr><td>Bet365</td><td>99.6%</td><td>99.6%</td><td>99.6%</td><td>99.6%</td></tr><tr><td>Macau</td><td>99.6%</td><td>99.6%</td><td>99.7%</td><td>99.7%</td></tr><tr><td>Crown</td><td>98.2%</td><td>98.2%</td><td>100.0%</td><td>100.0%</td></tr><tr><td>Ladbrokes</td><td>14.5%</td><td>14.5%</td><td>89.0%</td><td>89.0%</td></tr><tr><td>William Hill</td><td>53.5%</td><td>53.5%</td><td>92.6%</td><td>92.6%</td></tr></table>
+</div>
+</div>
+
+<!-- Logic Check -->
+<div class="grid-2">
+<div class="card">
+<h2>逻辑一致性</h2>
+<table><tr><th>检查项</th><th>结果</th></tr><tr><td>比分 vs 赛果不一致</td><td>3 场</td></tr><tr><td>隐含概率异常</td><td>99 条</td></tr><tr><td>总进球 vs 比分和不一致</td><td>2 场</td></tr></table>
+</div>
+<div class="card">
+<h2>时序安全性</h2>
+<table><tr><th>检查项</th><th>结果</th></tr><tr><td>未来比赛</td><td>2 场</td></tr><tr><td>赛季范围异常</td><td>1 个赛季</td></tr><tr><td>泄露风险评估</td><td style='font-size:12px'>历史数据中的赔率来自赛前采集，不存在未来数据泄露。match_features 表的标签(home_win/draw/away_win)基于比赛结果，仅应在模型训练阶段使用，不应作为选股/特征输入。...</td></tr></table>
+</div>
+</div>
+
+<!-- Distribution -->
+<div class="grid-2">
+<div class="card">
+<h2>联赛 & 赛季分布</h2>
+<h3 style='font-size:14px;margin-top:12px'>联赛分布</h3><table><tr><th>联赛</th><th>数量</th></tr><tr><td>英超</td><td>1530</td></tr><tr><td>西甲</td><td>1524</td></tr><tr><td>意甲</td><td>1522</td></tr><tr><td>法甲</td><td>1375</td></tr><tr><td>德甲</td><td>1233</td></tr><tr><td>欧冠</td><td>782</td></tr><tr><td>欧罗巴</td><td>646</td></tr></table><h3 style='font-size:14px;margin-top:12px'>赛季分布</h3><table><tr><th>赛季</th><th>数量</th></tr><tr><td>2021</td><td>1188</td></tr><tr><td>2022</td><td>2033</td></tr><tr><td>2023</td><td>2252</td></tr><tr><td>2024</td><td>2069</td></tr><tr><td>2025</td><td>1070</td></tr></table><h3 style='font-size:14px;margin-top:12px'>赛果分布 TOP-10</h3><table><tr><th>赛果/比分</th><th>数量</th></tr><tr><td>胜</td><td>3794</td></tr><tr><td>负</td><td>2658</td></tr><tr><td>平</td><td>2128</td></tr><tr><td>-</td><td>25</td></tr><tr><td>延期</td><td>2</td></tr></table>
+</div>
+<div class="card">
+<h2>赔率统计</h2>
+<table><tr><th>公司</th><th>均主胜</th><th>均平</th><th>均客胜</th></tr><tr><td>Bet365</td><td>2.831</td><td>4.12</td><td>4.705</td></tr><tr><td>Macau</td><td>2.528</td><td>3.896</td><td>3.934</td></tr><tr><td>Betfair</td><td>2.928</td><td>4.321</td><td>5.005</td></tr><tr><td>Crown</td><td>2.736</td><td>4.133</td><td>4.42</td></tr><tr><td>Ladbrokes</td><td>2.709</td><td>3.955</td><td>4.451</td></tr><tr><td>William Hill</td><td>2.81</td><td>4.087</td><td>4.561</td></tr></table>
+</div>
+</div>
+
+<!-- Missing Rates -->
+<div class="section">
+<div class="card">
+<h2>字段缺失率</h2>
+<div style='margin-bottom:16px;padding:12px;background:#f0fdf4;border-radius:8px'><strong>AI 可用率:</strong> 8,577 / 8,612 (99.59%)<br><small>隐含概率 + 标签均完整的比赛（可用于 AI 训练）</small></div><h3 style='font-size:14px;margin-top:12px'>比赛表字段</h3><table><tr><th>字段</th><th>缺失数</th><th>缺失率</th></tr><tr><td>kickoff_time</td><td>0</td><td><span class='badge badge-ok'>0.0%</span></td></tr><tr><td>home_score</td><td>30</td><td><span class='badge badge-ok'>0.35%</span></td></tr><tr><td>away_score</td><td>30</td><td><span class='badge badge-ok'>0.35%</span></td></tr><tr><td>score_display</td><td>0</td><td><span class='badge badge-ok'>0.0%</span></td></tr><tr><td>half_time_score</td><td>0</td><td><span class='badge badge-ok'>0.0%</span></td></tr><tr><td>total_goals</td><td>129</td><td><span class='badge badge-warn'>1.5%</span></td></tr><tr><td>half_full_result</td><td>5</td><td><span class='badge badge-ok'>0.06%</span></td></tr><tr><td>ft_result</td><td>5</td><td><span class='badge badge-ok'>0.06%</span></td></tr><tr><td>round</td><td>0</td><td><span class='badge badge-ok'>0.0%</span></td></tr><tr><td>home_ranking</td><td>8612</td><td><span class='badge badge-err'>100.0%</span></td></tr><tr><td>away_ranking</td><td>8612</td><td><span class='badge badge-err'>100.0%</span></td></tr></table><h3 style='font-size:14px;margin-top:12px'>odds_europe</h3><table><tr><th>字段</th><th>缺失数</th><th>缺失率</th></tr><tr><td>odds_home</td><td>0</td><td><span class='badge badge-ok'>0.0%</span></td></tr><tr><td>odds_draw</td><td>0</td><td><span class='badge badge-ok'>0.0%</span></td></tr><tr><td>odds_away</td><td>0</td><td><span class='badge badge-ok'>0.0%</span></td></tr></table><h3 style='font-size:14px;margin-top:12px'>odds_asian</h3><table><tr><th>字段</th><th>缺失数</th><th>缺失率</th></tr><tr><td>high_water</td><td>29827</td><td><span class='badge badge-err'>47.4%</span></td></tr><tr><td>handicap</td><td>0</td><td><span class='badge badge-ok'>0.0%</span></td></tr><tr><td>low_water</td><td>29759</td><td><span class='badge badge-err'>47.29%</span></td></tr></table><h3 style='font-size:14px;margin-top:12px'>odds_over_under</h3><table><tr><th>字段</th><th>缺失数</th><th>缺失率</th></tr><tr><td>over_water</td><td>36925</td><td><span class='badge badge-err'>44.58%</span></td></tr><tr><td>handicap</td><td>0</td><td><span class='badge badge-ok'>0.0%</span></td></tr><tr><td>under_water</td><td>36946</td><td><span class='badge badge-err'>44.61%</span></td></tr></table>
+</div>
+</div>
+
+<!-- Issues List -->
+<div class="section">
+<div class="card">
+<h2>问题清单 (6)</h2>
+<div class='issue-info'><span class='badge badge-info'>INFO</span> [basic] Home Score Null: 30 条 (0.3%) (30)</div><div class='issue-info'><span class='badge badge-info'>INFO</span> [basic] Away Score Null: 30 条 (0.3%) (30)</div><div class='issue-info'><span class='badge badge-info'>INFO</span> [basic] Ft Result Empty: 5 条 (0.1%) (5)</div><div class='issue-critical'><span class='badge badge-err'>CRIT</span> [logic] 比分与赛果不一致: 3 场 (3)</div><div class='issue-info'><span class='badge badge-info'>INFO</span> [temporal] 未来比赛: 2 场 (可能在赛程中) (2)</div><div class='issue-warning'><span class='badge badge-warn'>WARN</span> [temporal] 2 场比赛 collected_at 早于比赛时间</div>
+</div>
+</div>
+
+</div>
+</body>
+</html>
