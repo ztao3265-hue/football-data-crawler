@@ -29,6 +29,7 @@ exports/*.csv
 exports/*.xlsx
 data/raw/*
 datasets/*
+models/*
 data/clean/*
 data/processed/*
 data/reports/*
@@ -52,6 +53,7 @@ crawler/output/*
 browser_data/
 playwright-report/
 test-results/
+catboost_info/
 
 # OS
 .DS_Store
