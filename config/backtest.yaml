@@ -1,0 +1,97 @@
+# ── Walk Forward 回测配置 ──────────────────────────────────
+
+# 数据源
+data:
+  # 使用已生成的 feature dataset
+  train_csv: "datasets/train.csv"
+  validation_csv: "datasets/validation.csv"
+  test_csv: "datasets/test.csv"
+  # 或者从 SQLite 直接读取 (可选)
+  use_sqlite: false
+  database: "data/football_history.db"
+
+# 回测窗口
+windows:
+  mode: "quarterly"   # monthly | quarterly | yearly | custom
+  min_train_months: 12       # 最少训练月数
+  train_years: [2021, 2022]  # custom 模式下的固定训练年份
+  test_season: 2023          # custom 模式下的测试年份
+  expanding: true            # true=扩展窗口, false=滚动窗口
+  # 滚动窗口参数
+  rolling_window_months: 24  # 滚动模式下的训练窗口长度 (月)
+
+# 模型配置
+models:
+  xgboost:
+    enabled: true
+    params:
+      max_depth: 6
+      learning_rate: 0.05
+      n_estimators: 300
+      subsample: 0.8
+      colsample_bytree: 0.8
+      random_state: 42
+  lightgbm:
+    enabled: true
+    params:
+      max_depth: 6
+      learning_rate: 0.05
+      n_estimators: 300
+      subsample: 0.8
+      colsample_bytree: 0.8
+      random_state: 42
+  catboost:
+    enabled: true
+    params:
+      depth: 6
+      learning_rate: 0.05
+      iterations: 300
+      random_seed: 42
+
+# 任务配置
+tasks:
+  asian:
+    enabled: true
+    name: "让球盘"
+    type: "multiclass"
+    label_col: "label_asian_mapped"
+    class_map: {0: "客赢盘", 1: "走水", 2: "主赢盘"}
+  over_under:
+    enabled: true
+    name: "大小球"
+    type: "binary"
+    label_col: "label_over_2_5"
+    class_map: {0: "小球", 1: "大球"}
+  wdl:
+    enabled: false   # WDL 预测难度高，默认关闭
+    name: "胜平负"
+    type: "multiclass"
+    label_col: "label_wdl"
+    class_map: {0: "主胜", 1: "平局", 2: "客胜"}
+
+# 资金管理
+bankroll:
+  initial_capital: 10000.0    # 初始资金
+  mode: "flat"                # flat | kelly
+  flat:
+    stake_per_bet: 100.0      # 固定投注额 (flat 模式)
+    max_stake_pct: 0.01       # 最大单场投注比例 (占总资金)
+  kelly:
+    fraction: 0.25            # Kelly 分数 (0.25 = 1/4 Kelly)
+    max_stake_pct: 0.05       # 最大单场投注比例
+    min_edge: 0.02            # 最小优势阈值
+    max_exposure: 0.50        # 最大总暴露比例
+
+# 交易成本模拟
+slippage:
+  enabled: true
+  levels: [0.0, 0.01, 0.02, 0.03]  # 不同滑点级别
+  default: 0.02                      # 默认滑点
+
+# 报告
+reports:
+  output_dir: "reports/backtest"
+  charts_dir: "reports/charts"
+  formats: ["html", "json", "csv"]
+  chart_formats: ["png"]
+  chart_dpi: 150
