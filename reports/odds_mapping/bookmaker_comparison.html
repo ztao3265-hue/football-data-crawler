@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><title>博彩公司对比 — 2026-05-27T21:24:31</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI',system-ui,sans-serif; background:#f0f2f5; color:#1a1a2e; }
+.header { background:linear-gradient(135deg,#0f3460 0%,#16213e 100%); color:white; padding:32px 48px; }
+.header h1 { font-size:24px; }
+.container { max-width:1400px; margin:0 auto; padding:24px; }
+.card { background:white; border-radius:12px; padding:24px; box-shadow:0 1px 3px rgba(0,0,0,0.08); margin-bottom:24px; }
+table { width:100%; border-collapse:collapse; font-size:13px; margin-top:8px; }
+th, td { padding:8px 12px; text-align:left; border-bottom:1px solid #e8e8e8; }
+th { background:#f8f9fa; font-weight:600; }
+tr:hover { background:#f8f9fa; }
+h3 { font-size:14px; color:#333; margin:16px 0 8px 0; }
+pre { background:#1a1a2e; color:#10b981; padding:16px; border-radius:8px; font-size:13px; overflow-x:auto; }
+.badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; }
+.badge-ok { background:#d1fae5; color:#065f46; }
+.badge-warn { background:#fef3c7; color:#92400e; }
+</style>
+</head>
+<body>
+<div class="header"><h1>博彩公司对比</h1><p>2026-05-27T21:24:31</p></div>
+<div class="container"><div class="card">
+<h3>各公司亚盘收盘水位对比</h3>
+<table>
+<tr><th>公司</th><th>样本</th><th>高水均值</th><th>低水均值</th>
+<th>高水std</th><th>低水std</th><th>高水范围</th><th>低水范围</th><th>高-低相关</th></tr>
+<tr><td><strong>Bet365</strong></td><td>8,547</td><td>0.9472</td><td>0.9508</td><td>0.0951</td><td>0.0953</td><td>[0.60, 1.45]</td><td>[0.60, 1.45]</td><td>-0.9836</td></tr><tr><td><strong>Crown</strong></td><td>8,428</td><td>0.9396</td><td>0.9359</td><td>0.0843</td><td>0.0844</td><td>[0.71, 1.25]</td><td>[0.68, 1.20]</td><td>-0.9807</td></tr><tr><td><strong>Ladbrokes</strong></td><td>1,244</td><td>0.8582</td><td>0.8581</td><td>0.1031</td><td>0.1030</td><td>[0.73, 1.00]</td><td>[0.73, 1.00]</td><td>-0.9834</td></tr><tr><td><strong>Macau</strong></td><td>8,544</td><td>0.9252</td><td>0.9248</td><td>0.0869</td><td>0.0868</td><td>[0.58, 1.22]</td><td>[0.64, 1.24]</td><td>-0.9382</td></tr><tr><td><strong>William Hill</strong></td><td>4,599</td><td>0.8953</td><td>0.8897</td><td>0.0964</td><td>0.0970</td><td>[0.50, 1.50]</td><td>[0.50, 1.50]</td><td>-0.9251</td></tr>
+</table>
+<p style="color:#666;font-size:13px">标准差越小 → 水位越固定 → 区分度越差。所有公司std < 0.10, 说明水位无法反映概率差异。</p>
+</div></div>
+</body>
+</html>

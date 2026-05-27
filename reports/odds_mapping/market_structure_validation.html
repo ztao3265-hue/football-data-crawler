@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><title>市场结构验证 (Market Structure Validation) — 2026-05-27T21:24:31</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI',system-ui,sans-serif; background:#f0f2f5; color:#1a1a2e; }
+.header { background:linear-gradient(135deg,#0f3460 0%,#16213e 100%); color:white; padding:32px 48px; }
+.header h1 { font-size:24px; }
+.container { max-width:1400px; margin:0 auto; padding:24px; }
+.card { background:white; border-radius:12px; padding:24px; box-shadow:0 1px 3px rgba(0,0,0,0.08); margin-bottom:24px; }
+table { width:100%; border-collapse:collapse; font-size:13px; margin-top:8px; }
+th, td { padding:8px 12px; text-align:left; border-bottom:1px solid #e8e8e8; }
+th { background:#f8f9fa; font-weight:600; }
+tr:hover { background:#f8f9fa; }
+h3 { font-size:14px; color:#333; margin:16px 0 8px 0; }
+pre { background:#1a1a2e; color:#10b981; padding:16px; border-radius:8px; font-size:13px; overflow-x:auto; }
+.badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; }
+.badge-ok { background:#d1fae5; color:#065f46; }
+.badge-warn { background:#fef3c7; color:#92400e; }
+</style>
+</head>
+<body>
+<div class="header"><h1>市场结构验证 (Market Structure Validation)</h1><p>2026-05-27T21:24:31</p></div>
+<div class="container"><div class="card">
+<h3>欧赔校准曲线 — Bet365 收盘赔率</h3>
+<p>如果"可执行"列为 NO, 说明该赔率区间的实际胜率与隐含概率偏差超过博彩margin</p>
+<table>
+<tr><th>赔率区间</th><th>样本</th><th>隐含概率</th><th>实际胜率</th><th>偏差</th><th>可执行?</th></tr>
+<tr><td>(1.0, 1.2]</td><td>311</td><td>87.2%</td><td style='color:#10b981;font-weight:bold'>83.9%</td><td>-3.2%</td><td>YES</td></tr><tr><td>(1.2, 1.4]</td><td>873</td><td>75.8%</td><td style='color:#10b981;font-weight:bold'>75.4%</td><td>-0.4%</td><td>YES</td></tr><tr><td>(1.4, 1.6]</td><td>830</td><td>66.1%</td><td style='color:#10b981;font-weight:bold'>64.5%</td><td>-1.7%</td><td>YES</td></tr><tr><td>(1.6, 1.8]</td><td>925</td><td>58.6%</td><td style='color:#10b981;font-weight:bold'>57.2%</td><td>-1.4%</td><td>YES</td></tr><tr><td>(1.8, 2.0]</td><td>767</td><td>52.1%</td><td style='color:#10b981;font-weight:bold'>48.4%</td><td>-3.7%</td><td>YES</td></tr><tr><td>(2.0, 2.5]</td><td>1580</td><td>44.3%</td><td style='color:#10b981;font-weight:bold'>41.8%</td><td>-2.5%</td><td>YES</td></tr><tr><td>(2.5, 3.0]</td><td>985</td><td>36.1%</td><td style='color:#10b981;font-weight:bold'>32.1%</td><td>-4.0%</td><td>YES</td></tr><tr><td>(3.0, 4.0]</td><td>1116</td><td>28.6%</td><td style='color:#10b981;font-weight:bold'>25.8%</td><td>-2.8%</td><td>YES</td></tr><tr><td>(4.0, 6.0]</td><td>792</td><td>20.3%</td><td style='color:#10b981;font-weight:bold'>16.4%</td><td>-3.9%</td><td>YES</td></tr><tr><td>(6.0, 10.0]</td><td>318</td><td>13.0%</td><td style='color:#10b981;font-weight:bold'>12.6%</td><td>-0.4%</td><td>YES</td></tr>
+</table>
+
+<h3>推荐可执行赔率字段</h3>
+<table>
+<tr><th>#</th><th>字段</th><th>来源</th><th>可信度</th><th>可执行</th><th>理由</th><th>用法</th></tr>
+<tr><td>1</td><td><span class='badge badge-ok'>close_home_odds / close_draw_odds / close_away_odds</span></td><td>Bet365 收盘欧赔</td><td style='color:#10b981;font-weight:bold'>HIGH</td><td>YES</td><td style='font-size:12px'>Bet365是全球最大博彩公司, 收盘欧赔是标准可执行价格, margin ~5-6%, 隐含概率与实际结果校准良好</td><td style='font-size:11px'>用于WDL任务回测, 计算CLV, 验证模型预测价值</td></tr><tr><td>2</td><td><span class='badge badge-ok'>asian_close_high_water / asian_close_low_water</span></td><td>Bet365 收盘亚盘</td><td style='color:#f59e0b;font-weight:bold'>MEDIUM</td><td>YES</td><td style='font-size:12px'>水位范围[0.5, 1.5]基本合理, 但std仅0.09缺乏区分度。可能是数据源统一使用'中间价'而非实际双边报价。建议: 仅用于方向验证, 不用于精确ROI计算</td><td style='font-size:11px'>用于亚盘方向判断, 但ROI绝对值需要打折(滑点模拟20-30%)</td></tr><tr><td>3</td><td><span class='badge badge-ok'>ou_close_over_water / ou_close_under_water</span></td><td>Bet365 收盘大小球</td><td style='color:#ef4444;font-weight:bold'>LOW</td><td>YES</td><td style='font-size:12px'>over_water范围[0.06, 22.0]存在极端值, 可能有数据质量问题。均值~0.89-0.93但需要清洗异常值</td><td style='font-size:11px'>需先清洗异常值(剔除 > 3.0 的水位), 然后用中间价</td></tr><tr><td>4</td><td><span class='badge badge-ok'>avg_close_odds (多公司均值)</span></td><td>Bet365 + Macau + Crown + William Hill 等</td><td style='color:#f59e0b;font-weight:bold'>MEDIUM</td><td>YES</td><td style='font-size:12px'>多公司平均可以降低单一公司的异常值影响, 更接近市场共识价格</td><td style='font-size:11px'>作为基准价格, 验证单公司价格是否合理</td></tr><tr><td>5</td><td><span class='badge badge-warn'>high_water / low_water (作为精确ROI计算)</span></td><td>Excel 原始数据</td><td style='color:#666;font-weight:bold'>N/A</td><td>NO</td><td style='font-size:12px'>水位不随概率调整 — 97%胜率盘口仍给0.95水位。这不是真实博彩市场的行为。这些水位更像'参考线'或'中间价', 而非可执行的双边报价。不能直接用于ROI计算。</td><td style='font-size:11px'>仅用于: 方向信号验证、盘口分析、模型特征。禁止: 精确ROI计算、实盘模拟</td></tr>
+</table>
+
+<h3>核心结论</h3>
+<pre>
+1. Bet365 收盘欧赔: 可执行, 校准良好
+   - 隐含概率与实际结果偏差在margin范围内
+   - 可用于WDL回测、CLV分析
+
+2. 亚盘水位 (high_water/low_water): 不可用于精确ROI
+   - 水位不随概率调整, 所有盘口深度均为~0.93
+   - 真实市场中深盘的高胜率方水位应在0.1-0.3
+   - 这些水位更像"中间参考价"
+
+3. 需要至少20-30%滑点折扣
+   - 当前ROI数字需大幅打折才能在实盘中实现
+   - 亚盘"跟随盘口"策略的真实EV可能在5-10%而非60%
+</pre>
+</div></div>
+</body>
+</html>
