@@ -1,0 +1,424 @@
+{
+  "generated_at": "2026-05-27T17:17:46.326571",
+  "database": "D:\\Projects\\football-data-crawler\\data\\football_history.db",
+  "features": {
+    "total_features": 47,
+    "feature_names": [
+      "open_home_prob",
+      "open_draw_prob",
+      "open_away_prob",
+      "open_home_odds",
+      "open_draw_odds",
+      "open_away_odds",
+      "close_home_prob",
+      "close_draw_prob",
+      "close_away_prob",
+      "close_home_odds",
+      "close_draw_odds",
+      "close_away_odds",
+      "prob_change_home",
+      "prob_change_draw",
+      "prob_change_away",
+      "odds_change_pct_home",
+      "odds_change_pct_draw",
+      "odds_change_pct_away",
+      "odds_var_home",
+      "odds_var_draw",
+      "odds_var_away",
+      "bookmaker_divergence",
+      "odds_dispersion",
+      "favorite_direction",
+      "favorite_prob",
+      "asian_open_line",
+      "asian_close_line",
+      "asian_close_high_water",
+      "asian_close_low_water",
+      "asian_line_change",
+      "asian_line_direction",
+      "asian_direction",
+      "ou_open_line",
+      "ou_close_line",
+      "ou_close_over_water",
+      "ou_close_under_water",
+      "ou_line_change",
+      "ou_line_direction"
+    ],
+    "total_labels": 8,
+    "label_names": [
+      "label_asian",
+      "label_away_win",
+      "label_draw",
+      "label_goal_diff",
+      "label_home_win",
+      "label_over_2_5",
+      "label_total_goals",
+      "label_upset"
+    ],
+    "total_rows": 8612,
+    "dropped_features": [
+      "asian_open_high_water",
+      "asian_open_low_water",
+      "asian_high_water_change",
+      "asian_low_water_change",
+      "asian_heat",
+      "ou_open_over_water",
+      "ou_open_under_water",
+      "ou_over_water_change",
+      "ou_under_water_change"
+    ],
+    "dropped_count": 9
+  },
+  "warnings": [
+    "特征 'ou_open_line' 缺失率 53.26% > 20%",
+    "特征 'ou_line_change' 缺失率 53.26% > 20%",
+    "特征 'ou_line_direction' 缺失率 53.26% > 20%"
+  ],
+  "stats": {},
+  "split": {
+    "train_end": "2024-10-26 21:30:00",
+    "val_start": "2024-10-26 22:00:00",
+    "val_end": "2025-04-28 23:30:00",
+    "test_start": "2025-04-29 00:00:00",
+    "train_count": 6028,
+    "val_count": 1292,
+    "test_count": 1292,
+    "time_separation_ok": true
+  },
+  "feature_stats": {
+    "open_home_prob": {
+      "count": 8609,
+      "missing_rate": 0.03,
+      "mean": 0.4417,
+      "std": 0.1767
+    },
+    "open_draw_prob": {
+      "count": 8609,
+      "missing_rate": 0.03,
+      "mean": 0.2468,
+      "std": 0.0443
+    },
+    "open_away_prob": {
+      "count": 8609,
+      "missing_rate": 0.03,
+      "mean": 0.3115,
+      "std": 0.1593
+    },
+    "open_home_odds": {
+      "count": 8609,
+      "missing_rate": 0.03,
+      "mean": 2.6507,
+      "std": 1.6264
+    },
+    "open_draw_odds": {
+      "count": 8609,
+      "missing_rate": 0.03,
+      "mean": 3.9858,
+      "std": 1.0611
+    },
+    "open_away_odds": {
+      "count": 8609,
+      "missing_rate": 0.03,
+      "mean": 4.2159,
+      "std": 3.1002
+    },
+    "close_home_prob": {
+      "count": 8609,
+      "missing_rate": 0.03,
+      "mean": 0.4439,
+      "std": 0.1851
+    },
+    "close_draw_prob": {
+      "count": 8609,
+      "missing_rate": 0.03,
+      "mean": 0.2458,
+      "std": 0.0541
+    },
+    "close_away_prob": {
+      "count": 8609,
+      "missing_rate": 0.03,
+      "mean": 0.3102,
+      "std": 0.1659
+    },
+    "close_home_odds": {
+      "count": 8609,
+      "missing_rate": 0.03,
+      "mean": 2.8314,
+      "std": 6.8136
+    },
+    "close_draw_odds": {
+      "count": 8609,
+      "missing_rate": 0.03,
+      "mean": 4.1203,
+      "std": 1.6296
+    },
+    "close_away_odds": {
+      "count": 8609,
+      "missing_rate": 0.03,
+      "mean": 4.7047,
+      "std": 12.188
+    },
+    "prob_change_home": {
+      "count": 8609,
+      "missing_rate": 0.03,
+      "mean": 0.0023,
+      "std": 0.0475
+    },
+    "prob_change_draw": {
+      "count": 8609,
+      "missing_rate": 0.03,
+      "mean": -0.001,
+      "std": 0.0287
+    },
+    "prob_change_away": {
+      "count": 8609,
+      "missing_rate": 0.03,
+      "mean": -0.0013,
+      "std": 0.0425
+    },
+    "odds_change_pct_home": {
+      "count": 8609,
+      "missing_rate": 0.03,
+      "mean": 0.0514,
+      "std": 1.7935
+    },
+    "odds_change_pct_draw": {
+      "count": 8609,
+      "missing_rate": 0.03,
+      "mean": 0.0304,
+      "std": 0.2869
+    },
+    "odds_change_pct_away": {
+      "count": 8609,
+      "missing_rate": 0.03,
+      "mean": 0.1234,
+      "std": 3.2191
+    },
+    "odds_var_home": {
+      "count": 8611,
+      "missing_rate": 0.01,
+      "mean": 6.7811,
+      "std": 411.1408
+    },
+    "odds_var_draw": {
+      "count": 8611,
+      "missing_rate": 0.01,
+      "mean": 0.8014,
+      "std": 23.7368
+    },
+    "odds_var_away": {
+      "count": 8611,
+      "missing_rate": 0.01,
+      "mean": 19.8834,
+      "std": 736.3186
+    },
+    "bookmaker_divergence": {
+      "count": 8611,
+      "missing_rate": 0.01,
+      "mean": 0.0094,
+      "std": 0.0083
+    },
+    "odds_dispersion": {
+      "count": 8611,
+      "missing_rate": 0.01,
+      "mean": 0.043,
+      "std": 0.0762
+    },
+    "favorite_direction": {
+      "count": 8609,
+      "missing_rate": 0.03,
+      "mean": 0.6915,
+      "std": 0.9499
+    },
+    "favorite_prob": {
+      "count": 8609,
+      "missing_rate": 0.03,
+      "mean": 0.5326,
+      "std": 0.1267
+    },
+    "asian_open_line": {
+      "count": 8577,
+      "missing_rate": 0.41,
+      "mean": 0.3171,
+      "std": 0.8474
+    },
+    "asian_close_line": {
+      "count": 8577,
+      "missing_rate": 0.41,
+      "mean": 0.3065,
+      "std": 0.8056
+    },
+    "asian_close_high_water": {
+      "count": 8577,
+      "missing_rate": 0.41,
+      "mean": 0.9471,
+      "std": 0.0951
+    },
+    "asian_close_low_water": {
+      "count": 8577,
+      "missing_rate": 0.41,
+      "mean": 0.9508,
+      "std": 0.0954
+    },
+    "asian_line_change": {
+      "count": 8577,
+      "missing_rate": 0.41,
+      "mean": -0.0106,
+      "std": 0.2334
+    },
+    "asian_line_direction": {
+      "count": 8577,
+      "missing_rate": 0.41,
+      "mean": -0.0263,
+      "std": 0.7279
+    },
+    "asian_direction": {
+      "count": 8612,
+      "missing_rate": 0.0,
+      "mean": 0.3018,
+      "std": 0.8819
+    },
+    "ou_open_line": {
+      "count": 4025,
+      "missing_rate": 53.26,
+      "mean": 2.6313,
+      "std": 0.3715
+    },
+    "ou_close_line": {
+      "count": 8581,
+      "missing_rate": 0.36,
+      "mean": 2.6806,
+      "std": 0.3798
+    },
+    "ou_close_over_water": {
+      "count": 8581,
+      "missing_rate": 0.36,
+      "mean": 0.9512,
+      "std": 0.2051
+    },
+    "ou_close_under_water": {
+      "count": 8581,
+      "missing_rate": 0.36,
+      "mean": 0.9446,
+      "std": 0.085
+    },
+    "ou_line_change": {
+      "count": 4025,
+      "missing_rate": 53.26,
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "ou_line_direction": {
+      "count": 4025,
+      "missing_rate": 53.26,
+      "mean": 0.0,
+      "std": 0.0
+    }
+  },
+  "label_stats": {
+    "label_asian": {
+      "count": 8547,
+      "missing_rate": 0.75,
+      "distribution": {
+        "1.0": 5023,
+        "-1.0": 3133,
+        "0.0": 391
+      }
+    },
+    "label_away_win": {
+      "count": 8582,
+      "missing_rate": 0.35,
+      "distribution": {
+        "0.0": 5923,
+        "1.0": 2659
+      }
+    },
+    "label_draw": {
+      "count": 8582,
+      "missing_rate": 0.35,
+      "distribution": {
+        "0.0": 6454,
+        "1.0": 2128
+      }
+    },
+    "label_goal_diff": {
+      "count": 8582,
+      "missing_rate": 0.35,
+      "distribution": {
+        "0.0": 2128,
+        "1.0": 1826,
+        "-1.0": 1416,
+        "2.0": 1065,
+        "-2.0": 737,
+        "3.0": 514,
+        "-3.0": 326,
+        "4.0": 250,
+        "-4.0": 121,
+        "5.0": 91,
+        "-5.0": 41,
+        "6.0": 32,
+        "-6.0": 14,
+        "7.0": 13,
+        "-7.0": 3,
+        "8.0": 3,
+        "9.0": 1,
+        "-8.0": 1
+      }
+    },
+    "label_home_win": {
+      "count": 8582,
+      "missing_rate": 0.35,
+      "distribution": {
+        "0.0": 4787,
+        "1.0": 3795
+      }
+    },
+    "label_over_2_5": {
+      "count": 8582,
+      "missing_rate": 0.35,
+      "distribution": {
+        "1.0": 4583,
+        "0.0": 3999
+      }
+    },
+    "label_total_goals": {
+      "count": 8582,
+      "missing_rate": 0.35,
+      "distribution": {
+        "2.0": 2059,
+        "3.0": 1862,
+        "1.0": 1416,
+        "4.0": 1334,
+        "5.0": 776,
+        "0.0": 524,
+        "6.0": 389,
+        "7.0": 163,
+        "8.0": 44,
+        "9.0": 13,
+        "10.0": 1,
+        "11.0": 1
+      }
+    },
+    "label_upset": {
+      "count": 8579,
+      "missing_rate": 0.38,
+      "distribution": {
+        "0.0": 6851,
+        "1.0": 1728
+      }
+    }
+  },
+  "completeness": {
+    "train": {
+      "avg_completeness": 95.7,
+      "min_completeness": 47.0
+    },
+    "validation": {
+      "avg_completeness": 95.9,
+      "min_completeness": 47.4
+    },
+    "test": {
+      "avg_completeness": 95.6,
+      "min_completeness": 44.8
+    }
+  }
+}

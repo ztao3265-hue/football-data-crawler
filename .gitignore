@@ -28,6 +28,7 @@ exports/*.json
 exports/*.csv
 exports/*.xlsx
 data/raw/*
+datasets/*
 data/clean/*
 data/processed/*
 data/reports/*

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>AI 特征工程报告 — 2026-05-27 17:17</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI',system-ui,sans-serif; background:#f0f2f5; color:#1a1a2e; }
+.header { background:linear-gradient(135deg,#0f3460 0%,#16213e 100%); color:white; padding:32px 48px; }
+.header h1 { font-size:24px; margin-bottom:8px; }
+.header p { opacity:0.8; font-size:14px; }
+.container { max-width:1200px; margin:0 auto; padding:24px; }
+.grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:24px; }
+.grid-2 { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-bottom:24px; }
+.card { background:white; border-radius:12px; padding:24px; box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+.card h2 { font-size:16px; color:#16213e; margin-bottom:16px; padding-bottom:8px; border-bottom:2px solid #e8e8e8; }
+.stat-big { font-size:36px; font-weight:700; color:#0f3460; }
+.stat-label { font-size:13px; color:#666; margin-top:4px; }
+.badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:12px; font-weight:600; }
+.badge-ok { background:#d1fae5; color:#065f46; }
+.badge-warn { background:#fef3c7; color:#92400e; }
+.badge-err { background:#fee2e2; color:#991b1b; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th, td { padding:8px 12px; text-align:left; border-bottom:1px solid #e8e8e8; }
+th { background:#f8f9fa; font-weight:600; color:#555; }
+tr:hover { background:#f8f9fa; }
+.good { color:#10b981; } .warn { color:#f59e0b; } .bad { color:#ef4444; }
+</style>
+</head>
+<body>
+<div class="header">
+<h1>AI 特征工程报告</h1>
+<p>生成时间: 2026-05-27T17:17:46.326571 | 数据库: football_history.db</p>
+</div>
+
+<div class="container">
+
+<div class="grid-3">
+<div class="card">
+  <div class="stat-big">47</div>
+  <div class="stat-label">特征总数</div>
+</div>
+<div class="card">
+  <div class="stat-big">8</div>
+  <div class="stat-label">标签数</div>
+</div>
+<div class="card">
+  <div class="stat-big">8,612</div>
+  <div class="stat-label">总样本数</div>
+</div>
+</div>
+
+<div class="grid-3">
+<div class="card" style="text-align:center">
+  <div class="stat-big" style="font-size:28px">6,028</div>
+  <div class="stat-label">Train (70%) — 截止 2024-10-26</div>
+</div>
+<div class="card" style="text-align:center">
+  <div class="stat-big" style="font-size:28px">1,292</div>
+  <div class="stat-label">Val (15%) — 2024-10-26 ~ 2025-04-28</div>
+</div>
+<div class="card" style="text-align:center">
+  <div class="stat-big" style="font-size:28px">1,292</div>
+  <div class="stat-label">Test (15%) — 起始 2025-04-29</div>
+</div>
+</div>
+
+<div class="card" style="margin-bottom:24px">
+<h2>时间切分验证</h2>
+<table>
+<tr><th>检查项</th><th>结果</th></tr>
+<tr><td>Train max &lt; Val min</td>
+  <td><span class='badge badge-ok'>PASS — 无时间泄露</span></td></tr>
+<tr><td>Val max &lt; Test min</td>
+  <td><span class='badge badge-ok'>PASS</span></td></tr>
+<tr><td>Train 截止时间</td><td>2024-10-26 21:30:00</td></tr>
+<tr><td>Val 时间范围</td><td>2024-10-26 22:00:00 ~ 2025-04-28 23:30:00</td></tr>
+<tr><td>Test 起始时间</td><td>2025-04-29 00:00:00</td></tr>
+</table>
+</div>
+
+<div class="grid-2">
+<div class="card">
+<h2>特征清单 & 缺失率</h2>
+<div style="max-height:500px;overflow-y:auto">
+<table><tr><th>特征</th><th>缺失率</th><th>均值</th><th>标准差</th></tr>
+<tr><td>open_home_prob</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>open_draw_prob</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>open_away_prob</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>open_home_odds</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>open_draw_odds</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>open_away_odds</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>close_home_prob</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>close_draw_prob</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>close_away_prob</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>close_home_odds</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>close_draw_odds</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>close_away_odds</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>prob_change_home</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>prob_change_draw</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>prob_change_away</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>odds_change_pct_home</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>odds_change_pct_draw</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>odds_change_pct_away</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>odds_var_home</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>odds_var_draw</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>odds_var_away</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>bookmaker_divergence</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>odds_dispersion</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>favorite_direction</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>favorite_prob</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>asian_open_line</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>asian_close_line</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>asian_close_high_water</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>asian_close_low_water</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>asian_line_change</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>asian_line_direction</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>asian_direction</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>ou_open_line</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>ou_close_line</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>ou_close_over_water</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>ou_close_under_water</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>ou_line_change</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr><tr><td>ou_line_direction</td><td><span class='badge badge-ok'>0%</span></td><td>-</td><td>-</td></tr>
+</table>
+</div>
+</div>
+
+<div class="card">
+<h2>标签分布</h2>
+<table><tr><th>标签</th><th>数量</th><th>缺失率</th><th>分布</th></tr>
+<tr><td>label_asian</td><td>-</td><td><span class='badge badge-ok'>0%</span></td><td style='font-size:11px'></td></tr><tr><td>label_away_win</td><td>-</td><td><span class='badge badge-ok'>0%</span></td><td style='font-size:11px'></td></tr><tr><td>label_draw</td><td>-</td><td><span class='badge badge-ok'>0%</span></td><td style='font-size:11px'></td></tr><tr><td>label_goal_diff</td><td>-</td><td><span class='badge badge-ok'>0%</span></td><td style='font-size:11px'></td></tr><tr><td>label_home_win</td><td>-</td><td><span class='badge badge-ok'>0%</span></td><td style='font-size:11px'></td></tr><tr><td>label_over_2_5</td><td>-</td><td><span class='badge badge-ok'>0%</span></td><td style='font-size:11px'></td></tr><tr><td>label_total_goals</td><td>-</td><td><span class='badge badge-ok'>0%</span></td><td style='font-size:11px'></td></tr><tr><td>label_upset</td><td>-</td><td><span class='badge badge-ok'>0%</span></td><td style='font-size:11px'></td></tr>
+</table>
+</div>
+</div>
+
+<div class="card">
+<h2>警告 (3)</h2>
+<div class="issue-info">特征 'ou_open_line' 缺失率 53.26% > 20%</div><div class="issue-info">特征 'ou_line_change' 缺失率 53.26% > 20%</div><div class="issue-info">特征 'ou_line_direction' 缺失率 53.26% > 20%</div>
+</div>
+
+</div>
+</body>
+</html>
