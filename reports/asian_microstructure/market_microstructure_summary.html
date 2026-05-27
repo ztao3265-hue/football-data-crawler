@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title>亚洲盘市场微结构综合报告</title>
+<style>
+body{font-family:Arial,sans-serif;margin:20px;background:#f5f5f5;max-width:1200px}
+h1{color:#1a1a2e}h2{color:#16213e;border-bottom:2px solid #0f3460;padding-bottom:5px;margin-top:30px}
+h3{color:#333;margin-top:15px}
+.card{background:white;border-radius:8px;padding:15px;margin:10px 0;box-shadow:0 2px 4px rgba(0,0,0,0.1)}
+.stats{display:flex;gap:15px;flex-wrap:wrap}
+.stat{background:linear-gradient(135deg,#0f3460,#16213e);color:white;padding:15px;border-radius:8px;min-width:100px;text-align:center}
+.stat.green{background:linear-gradient(135deg,#1a8a4a,#0d5e2e)}
+.stat.orange{background:linear-gradient(135deg,#c75b1a,#8b3a0a)}
+.stat.red{background:linear-gradient(135deg,#b53030,#7a1a1a)}
+.stat .value{font-size:24px;font-weight:bold}.stat .label{font-size:11px;opacity:0.85;margin-top:3px}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14px}
+th,td{border:1px solid #ddd;padding:6px 10px;text-align:left}
+th{background:#0f3460;color:white}tr:nth-child(even){background:#f8f8f8}
+.key-finding{background:#e8f5e9;border-left:4px solid #4caf50;padding:12px;margin:10px 0;border-radius:4px}
+.limitation{background:#fff3cd;border-left:4px solid #ffc107;padding:12px;margin:10px 0;border-radius:4px}
+.recommendation{background:#e3f2fd;border-left:4px solid #2196f3;padding:12px;margin:10px 0;border-radius:4px}
+</style></head>
+<body>
+<h1>亚洲盘市场微结构引擎 — 综合报告</h1>
+<p>Generated: 2026-05-27 21:43:35 | Total matches: 0</p>
+
+<div class="card">
+<h2>核心指标</h2>
+<div class="stats">
+<div class="stat"><div class="value">0.9553</div><div class="label">公允vs实际盘口相关性</div></div>
+<div class="stat green"><div class="value">4.39%</div><div class="label">平均Edge</div></div>
+<div class="stat"><div class="value">55.5</div><div class="label">平均强度评分</div></div>
+<div class="stat orange"><div class="value">3.1%</div><div class="label">风险标记率</div></div>
+<div class="stat green"><div class="value">9.9%</div><div class="label">A级信号率</div></div>
+</div>
+</div>
+
+<div class="card">
+<h2>Trade Score 分布</h2>
+<table><tr><th>等级</th><th>占比</th><th>含义</th></tr>
+<tr><td>A级 (强价值)</td><td>9.9%</td><td>Edge≥5% + 强信号 + 低分歧 + 风控通过</td></tr>
+<tr><td>B级 (可下注)</td><td>37.4%</td><td>Edge≥3% + 信号确认 + 风控通过</td></tr>
+<tr><td>C级 (观望)</td><td>36.5%</td><td>Edge≥1% + 基础强度</td></tr>
+<tr><td>D级 (放弃)</td><td>16.2%</td><td>无信号或风险过高</td></tr>
+</table>
+</div>
+
+<h3>Trade Score 胜率验证</h3><table><tr><th>等级</th><th>信号数</th><th>胜场</th><th>胜率</th></tr><tr><td>A级</td><td>850</td><td>791</td><td>93.1%</td></tr><tr><td>B级</td><td>3222</td><td>2534</td><td>78.6%</td></tr><tr><td>C级</td><td>2619</td><td>1624</td><td>62.0%</td></tr><tr><td>D级</td><td>13</td><td>7</td><td>53.8%</td></tr></table>
+
+<div class="card">
+<h3>博彩公司对比</h3><table><tr><th>公司</th><th>样本数</th><th>盘口均值</th><th>盘口Std</th><th>高水均值</th><th>低水均值</th></tr><tr><td>Bet365</td><td>8577</td><td>0.306</td><td>0.806</td><td>0.947</td><td>0.951</td></tr><tr><td>Macau</td><td>8574</td><td>0.308</td><td>0.825</td><td>0.925</td><td>0.925</td></tr><tr><td>Crown</td><td>8458</td><td>0.311</td><td>0.813</td><td>0.939</td><td>0.936</td></tr><tr><td>William Hill</td><td>4610</td><td>0.325</td><td>0.794</td><td>0.895</td><td>0.89</td></tr><tr><td>Ladbrokes</td><td>1247</td><td>0.39</td><td>0.907</td><td>0.858</td><td>0.858</td></tr></table>
+</div>
+
+<div class="card">
+<h2>盘口变化类型分布</h2>
+<p>{'line_movement': {'盘口稳定': 4062, '降盘': 1960, '升盘': 1837, '跳降盘': 428, '跳升盘': 325}, 'combined_signal': {'正常波动': 7859, '强势跳降盘': 428, '强势跳升盘': 325}}</p>
+</div>
+
+<div class="card">
+<h2>行为标签分布</h2>
+<p>{'正常盘口': 4601, '诱盘信号': 2846, '临场资金冲击': 753, '假动作盘口': 412}</p>
+<p>标签覆盖率: 46.6%</p>
+</div>
+
+<div class="card">
+<h2>风险过滤统计</h2>
+<p>总标记: 268 (3.1%)</p>
+<p>['深盘风险: 66', '高频跳盘: 91', '水位失真: 116']</p>
+</div>
+
+<div class="key-finding">
+<strong>核心发现:</strong> 通过欧赔推导公允盘口 vs 实际亚盘盘口的差异, 识别市场定价错误机会。
+</div>
+
+<div class="limitation">
+<strong>数据局限:</strong> 当前仅有开盘/收盘两个快照。<br>
+- 无法进行真实的 24h/6h/1h/30min 时间序列盘口分析<br>
+- 缺少中间时刻的盘口变动数据 (odds_history 表中有存储但尚未提取)<br>
+- Water 分析受限于仅有 Bet365 终盘水位
+</div>
+
+<div class="recommendation">
+<strong>下一步建议:</strong><br>
+1. 提取 odds_history 表的时间序列数据, 实现真实的多时间维度分析<br>
+2. 使用 William Hill (水位范围最宽[0.50,1.50]) 的水位作为可执行价格<br>
+3. 对 A/B 级信号进行 Walk Forward 回测验证 ROI<br>
+4. 构建实时盘口监控, 在临场发现定价错误
+</div>
+
+</body></html>

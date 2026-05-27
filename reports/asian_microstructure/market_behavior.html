@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title>亚洲盘市场行为分析</title>
+<style>
+body{font-family:Arial,sans-serif;margin:20px;background:#f5f5f5}
+h1{color:#1a1a2e}h2{color:#16213e;border-bottom:2px solid #0f3460;padding-bottom:5px}
+.card{background:white;border-radius:8px;padding:15px;margin:10px 0;box-shadow:0 2px 4px rgba(0,0,0,0.1)}
+.stats{display:flex;gap:15px;flex-wrap:wrap}.stat{background:#0f3460;color:white;padding:15px;border-radius:8px;min-width:120px;text-align:center}
+.stat .value{font-size:28px;font-weight:bold}.stat .label{font-size:12px;opacity:0.8;margin-top:5px}
+table{border-collapse:collapse;width:100%;margin:10px 0}th,td{border:1px solid #ddd;padding:8px;text-align:left}
+th{background:#0f3460;color:white}tr:nth-child(even){background:#f2f2f2}
+.warning{background:#fff3cd;border:1px solid #ffc107;padding:10px;border-radius:4px;margin:10px 0}
+</style></head>
+<body>
+<h1>亚洲盘市场微结构分析报告</h1>
+<div class="card">
+<h2>概览</h2>
+<div class="stats">
+<div class="stat"><div class="value">8,612</div><div class="label">总场次</div></div>
+<div class="stat"><div class="value">268</div><div class="label">风险标记</div></div>
+<div class="stat"><div class="value">5,093</div><div class="label">Edge≥3%</div></div>
+<div class="stat"><div class="value">850</div><div class="label">A级信号</div></div>
+</div>
+</div>
+<div class="card">
+<h2>联赛 Edge 排名 (前10)</h2>
+<table><tr><th>联赛</th><th>平均Edge%</th></tr><tr><td>UEL</td><td>4.94%</td></tr><tr><td>LLG</td><td>4.64%</td></tr><tr><td>UCL</td><td>4.59%</td></tr><tr><td>ISA</td><td>4.36%</td></tr><tr><td>FL1</td><td>4.29%</td></tr><tr><td>EPL</td><td>4.22%</td></tr><tr><td>BUN</td><td>4.07%</td></tr></table>
+</div>
+<div class="card">
+<h2>盘口行为标签分布</h2>
+<table><tr><th>行为标签</th><th>数量</th><th>占比</th></tr><tr><td>正常盘口</td><td>4601</td><td>53.4%</td></tr><tr><td>诱盘信号</td><td>2846</td><td>33.0%</td></tr><tr><td>临场资金冲击</td><td>753</td><td>8.7%</td></tr><tr><td>假动作盘口</td><td>412</td><td>4.8%</td></tr></table>
+</div>
+<div class="card">
+<h2>博彩公司分歧分析</h2>
+<p>分歧数据已输出到 bookmaker_disagreement.csv</p>
+</div>
+<div class="card">
+<h2>数据说明</h2>
+<div class="warning">
+<strong>当前数据局限:</strong> 仅有开盘/收盘两个快照, 无法进行 24h/6h/1h/30min 的真实时间序列分析。
+完整的微观结构分析需要 odds_history 表中的带时间戳数据。
+</div>
+</div>
+<p style="color:#999;font-size:12px">Generated: 2026-05-27 21:43:34</p>
+</body></html>
