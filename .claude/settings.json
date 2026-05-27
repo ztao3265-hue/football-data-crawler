@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cd \"D:/Projects/football-data-crawler\" && if [ -n \"$(git status --porcelain)\" ]; then git add -A && git commit -m \"auto: session checkpoint\" && git push; fi"
+            "command": "cd \"D:/Projects/football-data-crawler\" && bash -c 'STAGED=$(git diff --cached --name-only) && if [ -n \"$STAGED\" ]; then echo \"[auto-sync] 检测到未提交更改,正在自动提交...\"; OVER1M=\"\"; for f in $STAGED; do sz=$(stat -c%s \"$f\" 2>/dev/null); if [ \"$sz\" -gt 1048576 ]; then OVER1M=\"$OVER1M $f($sz)\"; fi; done; if [ -n \"$OVER1M\" ]; then echo \"[auto-sync] 警告: 大文件(>1MB)未提交: $OVER1M\"; else git add -A && git commit -m \"auto: session checkpoint $(date +%Y%m%d-%H%M%S)\" && git push && echo \"[auto-sync] 已自动提交并推送\"; fi; else echo \"[auto-sync] 工作区干净,无需提交\"; fi'"
           }
         ]
       }

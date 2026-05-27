@@ -1,4 +1,4 @@
-# Python
+# ── Python ──────────────────────────────────────────────
 __pycache__/
 *.py[cod]
 *.so
@@ -11,19 +11,34 @@ venv/
 env/
 .pytest_cache/
 .coverage
-*.db
+.python-version
+*.pyc
 
-# IDE
+# ── IDE ─────────────────────────────────────────────────
 .idea/
 .vscode/
 *.swp
 *.swo
+*.swn
 
-# 环境变量
+# ── 环境变量 / 密钥 ─────────────────────────────────────
 .env
 .env.local
+.env.*
+*.pem
+*.key
+credentials.json
+secrets.json
 
-# 数据输出
+# ── SQLite ──────────────────────────────────────────────
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+
+# ── 数据输出 (生成文件, 不提交) ──────────────────────────
 exports/*.json
 exports/*.csv
 exports/*.xlsx
@@ -36,29 +51,49 @@ data/reports/*
 !data/raw/.gitkeep
 !data/clean/.gitkeep
 
-# 日志
-crawler/logs/*.log
+# ── 日志 ────────────────────────────────────────────────
+*.log
 !crawler/logs/.gitkeep
 
-# 缓存
+# ── 缓存 ────────────────────────────────────────────────
 crawler/cache/*
 !crawler/cache/.gitkeep
+__pycache__/
 
-# 截图和输出
+# ── 截图和输出 ──────────────────────────────────────────
 crawler/output/screenshots/*
 !crawler/output/screenshots/.gitkeep
 crawler/output/*
 
-# Playwright
+# ── 浏览器自动化 ────────────────────────────────────────
 browser_data/
 playwright-report/
 test-results/
 catboost_info/
 
-# OS
+# ── 临时文件 ────────────────────────────────────────────
+*.tmp
+*.temp
+*.bak
+*.backup
+*~
+*.orig
+
+# ── Jupyter ─────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ── Docker ──────────────────────────────────────────────
+.docker/
+
+# ── Node (如果有前端) ───────────────────────────────────
+node_modules/
+.next/
+.nuxt/
+dist-frontend/
+
+# ── OS ──────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
 desktop.ini
-
-# Node (如果有前端)
-node_modules/
+$RECYCLE.BIN/
