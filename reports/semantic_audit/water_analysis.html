@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><title>水位分布分析报告 — 2026-05-27T21:06:39</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI',system-ui,sans-serif; background:#f0f2f5; color:#1a1a2e; }
+.header { background:linear-gradient(135deg,#dc2626 0%,#991b1b 100%); color:white; padding:32px 48px; }
+.header h1 { font-size:24px; }
+.container { max-width:1200px; margin:0 auto; padding:24px; }
+.card { background:white; border-radius:12px; padding:24px; box-shadow:0 1px 3px rgba(0,0,0,0.08); margin-bottom:24px; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th, td { padding:8px 12px; text-align:left; border-bottom:1px solid #e8e8e8; }
+th { background:#f8f9fa; }
+h3 { font-size:14px; color:#333; margin:16px 0 8px 0; }
+pre { background:#1a1a2e; color:#10b981; padding:16px; border-radius:8px; font-size:13px; overflow-x:auto; }
+</style>
+</head>
+<body>
+<div class="header"><h1>水位分布分析报告</h1><p>2026-05-27T21:06:39</p></div>
+<div class="container"><div class="card">
+<h3>亚盘水位统计</h3>
+<table>
+<tr><th>字段</th><th>样本数</th><th>范围</th><th>均值</th><th>标准差</th><th>中位数</th><th>P5-P95</th><th>唯一值数</th></tr>
+<tr><td><strong>high_water</strong></td><td>32,553</td><td>[0.5000, 1.5000]</td><td>0.9272</td><td>0.0937</td><td>0.9300</td><td>0.7800 ~ 1.0600</td><td>77</td></tr><tr><td><strong>low_water</strong></td><td>32,553</td><td>[0.5000, 1.5000]</td><td>0.9265</td><td>0.0943</td><td>0.9300</td><td>0.7800 ~ 1.0700</td><td>76</td></tr>
+</table>
+
+<h3>水位分布解读</h3>
+<pre>
+真实博彩市场的水位特征:
+- 港赔水位通常在 0.65-1.50 范围
+- 高概率方水位较低 (如 0.70-0.85)
+- 低概率方水位较高 (如 1.00-1.20)
+- 水位差异反映概率差异
+
+当前数据特征:
+- 水位集中在 0.93-0.97 窄幅区间
+- 高低水位几乎无差异
+- 这说明数据源的水位可能:
+  a) 不是真实博彩公司的水位数据
+  b) 是经过某种处理/归一化的水位
+  c) 是另一种计量单位
+</pre>
+</div></div>
+</body>
+</html>

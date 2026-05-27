@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><title>字段分布报告 — 2026-05-27T21:06:39</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI',system-ui,sans-serif; background:#f0f2f5; color:#1a1a2e; }
+.header { background:linear-gradient(135deg,#dc2626 0%,#991b1b 100%); color:white; padding:32px 48px; }
+.header h1 { font-size:24px; }
+.container { max-width:1200px; margin:0 auto; padding:24px; }
+.card { background:white; border-radius:12px; padding:24px; box-shadow:0 1px 3px rgba(0,0,0,0.08); margin-bottom:24px; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th, td { padding:8px 12px; text-align:left; border-bottom:1px solid #e8e8e8; }
+th { background:#f8f9fa; }
+h3 { font-size:14px; color:#333; margin:16px 0 8px 0; }
+pre { background:#1a1a2e; color:#10b981; padding:16px; border-radius:8px; font-size:13px; overflow-x:auto; }
+</style>
+</head>
+<body>
+<div class="header"><h1>字段分布报告</h1><p>2026-05-27T21:06:39</p></div>
+<div class="container"><div class="card">
+<h3>亚盘水位字段关系</h3>
+<table>
+<tr><th>指标</th><th>值</th></tr>
+<tr><td>high >= low 占比</td><td>0.5243</td></tr>
+<tr><td>high == low 占比</td><td>0.0424</td></tr>
+<tr><td>当前逻辑ROI</td><td>0.5425</td></tr>
+<tr><td>纠正逻辑ROI</td><td>0.9287</td></tr>
+<tr><td>水位修正影响</td><td>0.3862</td></tr>
+</table>
+
+<h3>赔率解析验证</h3>
+<table>
+<tr><th>检查项</th><th>结果</th></tr>
+<tr><td>water + 1.0 范围</td><td>[1.50, 2.50]</td></tr>
+<tr><td>water + 1.0 均值</td><td>1.93</td></tr>
+<tr><td>欧赔margin均值</td><td>0.0575</td></tr>
+</table>
+</div></div>
+</body>
+</html>

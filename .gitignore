@@ -71,6 +71,9 @@ playwright-report/
 test-results/
 catboost_info/
 
+# ── 审计大文件 (交易明细 CSV 通常 > 1MB) ─────────────────
+reports/backtest/audit/trade_audit_*.csv
+
 # ── 临时文件 ────────────────────────────────────────────
 *.tmp
 *.temp

@@ -136,7 +136,7 @@ class WalkForwardEngine:
 
         # 运行时状态
         self.df: Optional[pd.DataFrame] = None
-        self.X_all: Optional[pd.DataFrame] = None
+        self.X_raw: Optional[pd.DataFrame] = None
         self.feature_names: List[str] = []
         self.results: dict = {}
         self.bets_data: dict = {}
@@ -184,21 +184,20 @@ class WalkForwardEngine:
         return df
 
     def prepare_features(self) -> Tuple[pd.DataFrame, List[str]]:
-        """特征预处理。"""
+        """特征预处理 (不在全量数据上fit, 避免数据泄露)。"""
         print("[2/8] 特征预处理...")
 
         exclude = set(META_COLS) | set(LABEL_COLS) | {"label_wdl", "label_asian_mapped"}
         feature_cols = [c for c in self.df.columns
                         if c not in exclude and self.df[c].dtype in ("float64", "int64")]
 
-        X = self.df[feature_cols].copy()
-        imp = SimpleImputer(strategy="median")
-        X_imputed = pd.DataFrame(imp.fit_transform(X), columns=feature_cols, index=X.index)
+        # 仅提取特征矩阵, 不做imputation — imputation在每个窗口内用训练集fit
+        X_raw = self.df[feature_cols].copy()
 
-        self.X_all = X_imputed
+        self.X_raw = X_raw
         self.feature_names = feature_cols
         print(f"  特征数: {len(feature_cols)}")
-        return X_imputed, feature_cols
+        return X_raw, feature_cols
 
     # ── 窗口生成 ────────────────────────────────────────────────
 
@@ -621,10 +620,21 @@ class WalkForwardEngine:
                         print(f"    [{win['label']}] 样本不足 (train={len(train_idx)}, test={len(test_idx)})，跳过")
                         continue
 
-                    X_tr = self.X_all.loc[train_idx]
+                    X_tr_raw = self.X_raw.loc[train_idx]
                     y_tr = y_all.loc[train_idx].astype(int)
-                    X_ts = self.X_all.loc[test_idx]
+                    X_ts_raw = self.X_raw.loc[test_idx]
                     y_ts = y_all.loc[test_idx].astype(int)
+
+                    # 在每个窗口内单独fit imputer, 仅用训练集, 杜绝数据泄露
+                    imputer = SimpleImputer(strategy="median")
+                    X_tr = pd.DataFrame(
+                        imputer.fit_transform(X_tr_raw),
+                        columns=self.feature_names, index=X_tr_raw.index
+                    )
+                    X_ts = pd.DataFrame(
+                        imputer.transform(X_ts_raw),
+                        columns=self.feature_names, index=X_ts_raw.index
+                    )
 
                     # 训练模型
                     models = self._train_models(X_tr, y_tr, task_type)

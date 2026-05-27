@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>字段语义审计报告 — 2026-05-27T21:06:39</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI',system-ui,sans-serif; background:#f0f2f5; color:#1a1a2e; }
+.header { background:linear-gradient(135deg,#dc2626 0%,#991b1b 100%); color:white; padding:32px 48px; }
+.header h1 { font-size:24px; }
+.header p { opacity:0.8; font-size:14px; margin-top:8px; }
+.container { max-width:1400px; margin:0 auto; padding:24px; }
+.card { background:white; border-radius:12px; padding:24px; box-shadow:0 1px 3px rgba(0,0,0,0.08); margin-bottom:24px; }
+.card h2 { font-size:16px; color:#16213e; margin-bottom:16px; padding-bottom:8px; border-bottom:2px solid #e8e8e8; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th, td { padding:8px 12px; text-align:left; border-bottom:1px solid #e8e8e8; }
+th { background:#f8f9fa; font-weight:600; color:#555; }
+tr:hover { background:#f8f9fa; }
+h3 { font-size:14px; color:#333; margin:16px 0 8px 0; }
+pre { background:#1a1a2e; color:#10b981; padding:16px; border-radius:8px; font-size:13px; overflow-x:auto; }
+</style>
+</head>
+<body>
+<div class="header">
+<h1>字段语义审计报告 (Field Semantic Audit)</h1>
+<p>生成: 2026-05-27T21:06:39 | 验证所有赔率/盘口字段的真实含义</p>
+</div>
+<div class="container">
+<div class="card"><h2>异常检测</h2><table><tr><th>级别</th><th>字段</th><th>详情</th></tr><tr><td style='color:#ef4444;font-weight:bold'>CRITICAL</td><td>model_strategy</td><td>[catboost] 模型预测与盘口方向一致率=98.8% > 95% — 模型无独立判断能力!</td></tr><tr><td style='color:#ef4444;font-weight:bold'>CRITICAL</td><td>model_strategy</td><td>[lightgbm] 模型预测与盘口方向一致率=96.0% > 95% — 模型无独立判断能力!</td></tr><tr><td style='color:#ef4444;font-weight:bold'>CRITICAL</td><td>model_strategy</td><td>[xgboost] 模型预测与盘口方向一致率=96.6% > 95% — 模型无独立判断能力!</td></tr><tr><td style='color:#ef4444;font-weight:bold'>CRITICAL</td><td>betting_strategy</td><td>跟随盘口+当前水位逻辑 ROI=61.6% — 盘口方向本身就构成了套利策略</td></tr><tr><td style='color:#3b82f6;font-weight:bold'>INFO</td><td>water_assignment</td><td>当前水位逻辑 vs 纠正逻辑 ROI差=0.2% — 水位字段语义可能正确但影响不大</td></tr></table></div>
+<div class="card"><h2>投注逻辑对比 (水位选择 × 策略方向)</h2><table><tr><th>策略</th><th>水位逻辑</th><th>ROI</th><th>胜率</th><th>投注数</th></tr><tr><td>跟随盘口</td><td>current</td><td>61.59%</td><td>82.8%</td><td>7371</td></tr><tr><td>跟随盘口</td><td>corrected</td><td>61.37%</td><td>82.8%</td><td>7371</td></tr><tr><td>逆盘口</td><td>current</td><td>-66.67%</td><td>17.2%</td><td>7371</td></tr><tr><td>逆盘口</td><td>corrected</td><td>-66.43%</td><td>17.2%</td><td>7371</td></tr></table></div>
+<div class="card"><h2>模型 vs 盘口方向一致性</h2><table><tr><th>模型</th><th>跟随盘口率</th><th>跟随胜率</th><th>逆势胜率</th></tr><tr><td>catboost</td><td>98.8%</td><td>82.3%</td><td>50.8%</td></tr><tr><td>lightgbm</td><td>96.0%</td><td>82.4%</td><td>29.6%</td></tr><tr><td>xgboost</td><td>96.6%</td><td>82.5%</td><td>34.2%</td></tr></table></div>
+<div class="card"><h2>审计结论</h2>
+<pre>
+核心问题: 亚洲盘口的盘口线方向本身就构成了一个高ROI策略。
+即使不使用任何ML模型，"跟随盘口方向"的简单规则策略也能获得显著正收益。
+
+原因分析:
+1. 盘口线（如 +1.5 代表主队让1.5球）使得"受让方"赢盘概率极高
+2. 水位（high_water/low_water）集中在 0.93-0.97，未按概率调整
+3. 模型95%+的预测与盘口方向一致，无独立判断能力
+
+待确认:
+- high_water 是否对应下盘(受让方)水位?
+- 当前投注代码是否选错了水位字段?
+- 水位数据是否存在系统性问题?
+</pre>
+</div>
+</div>
+</body>
+</html>

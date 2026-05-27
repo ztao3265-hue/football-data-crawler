@@ -1,0 +1,148 @@
+{
+  "generated_at": "2026-05-27T21:06:39.927320",
+  "asian_water": {
+    "n_samples": 31466,
+    "high_ge_low_pct": 0.5243,
+    "high_eq_low_pct": 0.0424,
+    "current_logic_roi": 0.5425,
+    "corrected_logic_roi": 0.9287,
+    "water_fix_impact": 0.3862
+  },
+  "handicap_direction": {
+    "catboost": {
+      "follow_rate": 0.9884,
+      "follow_winrate": 0.8231,
+      "contrarian_winrate": 0.5077,
+      "n_follow": 5534,
+      "n_contrarian": 65
+    },
+    "lightgbm": {
+      "follow_rate": 0.9596,
+      "follow_winrate": 0.8238,
+      "contrarian_winrate": 0.2965,
+      "n_follow": 5370,
+      "n_contrarian": 226
+    },
+    "xgboost": {
+      "follow_rate": 0.9661,
+      "follow_winrate": 0.8249,
+      "contrarian_winrate": 0.3421,
+      "n_follow": 5407,
+      "n_contrarian": 190
+    }
+  },
+  "water_distribution": {
+    "asian": {
+      "high_water": {
+        "count": 32553,
+        "min": 0.5,
+        "max": 1.5,
+        "mean": 0.9272,
+        "std": 0.0937,
+        "median": 0.93,
+        "p5": 0.78,
+        "p95": 1.06,
+        "unique_values": 77
+      },
+      "low_water": {
+        "count": 32553,
+        "min": 0.5,
+        "max": 1.5,
+        "mean": 0.9265,
+        "std": 0.0943,
+        "median": 0.93,
+        "p5": 0.78,
+        "p95": 1.07,
+        "unique_values": 76
+      }
+    },
+    "over_under": {
+      "over_water": {
+        "count": 45104,
+        "min": 0.06,
+        "max": 22.0,
+        "mean": 0.8922,
+        "std": 0.205
+      },
+      "under_water": {
+        "count": 45104,
+        "min": 0.02,
+        "max": 8.0,
+        "mean": 0.9282,
+        "std": 0.1926
+      }
+    },
+    "high_water_narrow_pct": 0.3825,
+    "low_water_narrow_pct": 0.376
+  },
+  "odds_parsing": {
+    "water_plus_1_range": "[1.50, 2.50]",
+    "water_plus_1_mean": 1.93,
+    "euro_margin_mean": 0.0575
+  },
+  "raw_sample": {
+    "n_sampled": 100,
+    "n_matched_raw": 0
+  },
+  "betting_logic": {
+    "跟随盘口_current": {
+      "roi": 0.6159,
+      "win_rate": 0.8277,
+      "n_bets": 7371,
+      "wins": 6101,
+      "losses": 1270,
+      "total_profit": 453964.0
+    },
+    "跟随盘口_corrected": {
+      "roi": 0.6137,
+      "win_rate": 0.8277,
+      "n_bets": 7371,
+      "wins": 6101,
+      "losses": 1270,
+      "total_profit": 452340.0
+    },
+    "逆盘口_current": {
+      "roi": -0.6667,
+      "win_rate": 0.1723,
+      "n_bets": 7371,
+      "wins": 1270,
+      "losses": 6101,
+      "total_profit": -491393.0
+    },
+    "逆盘口_corrected": {
+      "roi": -0.6643,
+      "win_rate": 0.1723,
+      "n_bets": 7371,
+      "wins": 1270,
+      "losses": 6101,
+      "total_profit": -489680.0
+    }
+  },
+  "anomalies": [
+    {
+      "severity": "CRITICAL",
+      "field": "model_strategy",
+      "detail": "[catboost] 模型预测与盘口方向一致率=98.8% > 95% — 模型无独立判断能力!"
+    },
+    {
+      "severity": "CRITICAL",
+      "field": "model_strategy",
+      "detail": "[lightgbm] 模型预测与盘口方向一致率=96.0% > 95% — 模型无独立判断能力!"
+    },
+    {
+      "severity": "CRITICAL",
+      "field": "model_strategy",
+      "detail": "[xgboost] 模型预测与盘口方向一致率=96.6% > 95% — 模型无独立判断能力!"
+    },
+    {
+      "severity": "CRITICAL",
+      "field": "betting_strategy",
+      "detail": "跟随盘口+当前水位逻辑 ROI=61.6% — 盘口方向本身就构成了套利策略"
+    },
+    {
+      "severity": "INFO",
+      "field": "water_assignment",
+      "detail": "当前水位逻辑 vs 纠正逻辑 ROI差=0.2% — 水位字段语义可能正确但影响不大"
+    }
+  ]
+}

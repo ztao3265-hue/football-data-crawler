@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><title>市场真实性验证 — 2026-05-27T21:06:39</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI',system-ui,sans-serif; background:#f0f2f5; color:#1a1a2e; }
+.header { background:linear-gradient(135deg,#dc2626 0%,#991b1b 100%); color:white; padding:32px 48px; }
+.header h1 { font-size:24px; }
+.container { max-width:1200px; margin:0 auto; padding:24px; }
+.card { background:white; border-radius:12px; padding:24px; box-shadow:0 1px 3px rgba(0,0,0,0.08); margin-bottom:24px; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th, td { padding:8px 12px; text-align:left; border-bottom:1px solid #e8e8e8; }
+th { background:#f8f9fa; }
+h3 { font-size:14px; color:#333; margin:16px 0 8px 0; }
+pre { background:#1a1a2e; color:#10b981; padding:16px; border-radius:8px; font-size:13px; overflow-x:auto; }
+</style>
+</head>
+<body>
+<div class="header"><h1>市场真实性验证</h1><p>2026-05-27T21:06:39</p></div>
+<div class="container"><div class="card">
+<h3>核心验证: 策略ROI矩阵</h3>
+<p>如果"跟随盘口+任何水位逻辑"的ROI都显著为正 → 盘口线本身具有预测力</p>
+<p>如果"跟随盘口"ROI远高于"逆盘口" → 市场盘口定价方向正确但水位对价不足</p>
+<table>
+<tr><th>策略方向</th><th>水位逻辑</th><th>ROI</th><th>胜率</th><th>投注数</th><th>总利润</th></tr>
+<tr><td>跟随盘口</td><td>current</td><td style='font-weight:bold'>61.59%</td><td>82.8%</td><td>7371</td><td>453964</td></tr><tr><td>跟随盘口</td><td>corrected</td><td style='font-weight:bold'>61.37%</td><td>82.8%</td><td>7371</td><td>452340</td></tr><tr><td>逆盘口</td><td>current</td><td style='font-weight:bold'>-66.67%</td><td>17.2%</td><td>7371</td><td>-491393</td></tr><tr><td>逆盘口</td><td>corrected</td><td style='font-weight:bold'>-66.43%</td><td>17.2%</td><td>7371</td><td>-489680</td></tr>
+</table>
+
+<h3>真实性判断标准</h3>
+<pre>
+真实市场的特征:
+  - "跟随盘口"策略长期ROI应 ≈ 0% (扣除margin后为负)
+  - 水位差异应反映概率差异: 高胜率 → 低水位, 低胜率 → 高水位
+  - 盘口线两侧水位之和应 > 2.0 (体现margin)
+
+如果当前数据不满足以上条件:
+  → 水位数据不是"可执行的投注赔率"
+  → 当前的ROI计算基于"不可交易的价格"
+  → 实际交易中无法获得这个ROI
+</pre>
+</div></div>
+</body>
+</html>
