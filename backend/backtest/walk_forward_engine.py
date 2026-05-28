@@ -27,11 +27,11 @@ from sklearn.impute import SimpleImputer
 from sklearn.metrics import accuracy_score, roc_auc_score
 from sklearn.preprocessing import LabelEncoder
 
-from bankroll_manager import BankrollManager
-from clv_analyzer import CLVAnalyzer
-from performance_metrics import PerformanceMetrics
-from report_generator import ReportGenerator
-from slippage_simulator import SlippageSimulator
+from .bankroll_manager import BankrollManager
+from .clv_analyzer import CLVAnalyzer
+from .performance_metrics import PerformanceMetrics
+from .report_generator import ReportGenerator
+from .slippage_simulator import SlippageSimulator
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 DATASETS_DIR = PROJECT_ROOT / "datasets"

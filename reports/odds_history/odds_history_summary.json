@@ -1,0 +1,41 @@
+{
+  "generated_at": "2026-05-28T09:41:15.183020",
+  "movement_stats": [
+    {
+      "movement_type": "升盘",
+      "n": 2,
+      "avg_change": 0.25,
+      "avg_volatility": 0.125
+    }
+  ],
+  "steam_stats": [
+    {
+      "steam_type": "中等升盘+降水确认",
+      "n": 2,
+      "avg_score": 73.0
+    }
+  ],
+  "sharp_stats": [
+    {
+      "signal_type": "multi_bookmaker_consensus",
+      "n": 1,
+      "avg_strength": 25.0
+    }
+  ],
+  "bookmaker_stats": [
+    {
+      "bookmaker": "Macau",
+      "n": 1,
+      "avg_line_change": 0.25,
+      "avg_volatility": 0.125,
+      "steam_count": 1
+    },
+    {
+      "bookmaker": "Bet365",
+      "n": 1,
+      "avg_line_change": 0.25,
+      "avg_volatility": 0.125,
+      "steam_count": 1
+    }
+  ]
+}

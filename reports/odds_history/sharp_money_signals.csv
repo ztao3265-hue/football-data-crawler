@@ -1,0 +1,2 @@
+﻿id,match_id,signal_type,signal_strength,bookmakers_involved,line_direction,water_direction,detection_time,confidence,reasoning,created_at,home_team,away_team
+1,test001,multi_bookmaker_consensus,25.0,,1,,,MEDIUM,"{""signal_type"": ""multi_bookmaker_consensus"", ""signal_strength"": 25.0, ""line_direction"": 1, ""n_bookmakers"": 2, ""consistency"": 1.0}",2026-05-28 01:41:15,Arsenal,Chelsea

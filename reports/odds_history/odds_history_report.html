@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><title>赔率历史分析报告</title>
+<style>
+body { font-family: 'Segoe UI', system-ui, sans-serif; margin: 20px; background: #f5f5f5; }
+h1 { color: #1a1a2e; } h2 { color: #16213e; border-bottom: 2px solid #0f3460; padding-bottom: 5px; }
+.card { background: white; border-radius: 8px; padding: 20px; margin: 15px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+th { background: #0f3460; color: white; }
+tr:nth-child(even) { background: #f8f8f8; }
+.stats { display: flex; gap: 15px; flex-wrap: wrap; }
+.stat { background: #0f3460; color: white; padding: 15px; border-radius: 8px; min-width: 120px; text-align: center; }
+.stat .value { font-size: 28px; font-weight: bold; }
+.stat .label { font-size: 12px; opacity: 0.8; margin-top: 5px; }
+</style>
+</head>
+<body>
+<h1>赔率历史时间序列分析报告</h1>
+<p>生成时间: 2026-05-28 09:41:15</p>
+
+<div class="card">
+<h2>核心指标</h2>
+<div class="stats">
+<div class="stat"><div class="value">1</div><div class="label">盘口变化类型</div></div>
+<div class="stat"><div class="value">1</div><div class="label">Steam Move 类型</div></div>
+<div class="stat"><div class="value">2</div><div class="label">Steam Move 数量</div></div>
+<div class="stat"><div class="value">1</div><div class="label">Sharp Money 信号</div></div>
+</div>
+</div>
+
+<div class="card">
+<h2>盘口变化统计</h2>
+<table><tr><th>变化类型</th><th>数量</th><th>平均变化</th><th>平均波动率</th></tr><tr><td>升盘</td><td>2</td><td>0.250</td><td>0.125</td></tr></table>
+</div>
+
+<div class="card">
+<h2>Steam Move 统计</h2>
+<table><tr><th>类型</th><th>数量</th><th>平均分数</th></tr><tr><td>中等升盘+降水确认</td><td>2</td><td>73.0</td></tr></table>
+</div>
+
+<div class="card">
+<h2>Sharp Money 信号</h2>
+<table><tr><th>信号类型</th><th>数量</th><th>平均强度</th></tr><tr><td>multi_bookmaker_consensus</td><td>1</td><td>25.0</td></tr></table>
+</div>
+
+<div class="card">
+<h2>博彩公司对比</h2>
+<table><tr><th>公司</th><th>样本数</th><th>平均变化</th><th>平均波动率</th><th>Steam Move</th></tr><tr><td>Macau</td><td>1</td><td>0.250</td><td>0.125</td><td>1</td></tr><tr><td>Bet365</td><td>1</td><td>0.250</td><td>0.125</td><td>1</td></tr></table>
+</div>
+
+<div class="card">
+<h2>方法论</h2>
+<pre>
+<b>Steam Move (蒸汽移动)</b>
+定义: 短时间内盘口大幅变动，通常由职业资金驱动
+检测标准:
+  - 盘口变化 ≥ 0.25 球
+  - 水位同向变化 (升盘+降水)
+  - 波动率高 + 无反转
+
+<b>Reverse Line Movement (反向盘口移动)</b>
+定义: 盘口变动方向与公众投注方向相反
+检测标准:
+  - 升盘 + 高水上升 (诱上盘)
+  - 降盘 + 低水上升 (诱下盘)
+
+<b>Sharp Money Signal</b>
+定义: 职业资金留下的市场痕迹
+检测标准:
+  - 多家公司同时同向变动 (一致性 ≥ 80%)
+  - 反向盘口移动 (RLM)
+</pre>
+</div>
+</body></html>
