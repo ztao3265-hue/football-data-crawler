@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>每日推荐系统 — Football AI</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #0f1923; color: #e0e0e0; min-height:100vh; }
+.header { background: linear-gradient(135deg, #1a3a4a 0%, #0f2835 100%); padding: 20px 32px; display:flex; align-items:center; justify-content:space-between; border-bottom: 1px solid #2a4a5a; }
+.header h1 { font-size: 22px; font-weight: 700; color: #4fc3f7; }
+.header .date { font-size: 14px; color: #88aabb; }
+.header .actions { display:flex; gap:8px; }
+.btn { padding: 8px 16px; border:1px solid #3a5a6a; border-radius:6px; background:#1a3a4a; color:#c0d0d8; cursor:pointer; font-size:13px; transition:all .2s; }
+.btn:hover { background:#2a5a6a; border-color:#4fc3f7; color:#fff; }
+.btn-primary { background:#0288d1; border-color:#0288d1; color:#fff; }
+.btn-primary:hover { background:#039be5; }
+.btn-danger { background:#c62828; border-color:#c62828; color:#fff; }
+.container { max-width:1400px; margin:0 auto; padding:20px; }
+.stats-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin-bottom:20px; }
+.stat-card { background: #1a2e3c; border-radius:10px; padding:16px 20px; border:1px solid #2a4a5a; }
+.stat-card .stat-value { font-size: 32px; font-weight: 700; color: #4fc3f7; }
+.stat-card .stat-label { font-size: 12px; color: #88aabb; margin-top:4px; text-transform:uppercase; letter-spacing:0.5px; }
+.stat-card.warn .stat-value { color: #ff9800; }
+.stat-card.good .stat-value { color: #66bb6a; }
+.stat-card.bad .stat-value { color: #ef5350; }
+
+.panels { display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:20px; }
+.panel { background:#1a2e3c; border-radius:10px; border:1px solid #2a4a5a; overflow:hidden; }
+.panel-header { padding:14px 20px; background:#1f3648; border-bottom:1px solid #2a4a5a; display:flex; justify-content:space-between; align-items:center; }
+.panel-header h2 { font-size:16px; font-weight:600; color:#c0d0d8; }
+.panel-body { padding:16px 20px; max-height:500px; overflow-y:auto; }
+.panel.full { grid-column: 1 / -1; }
+
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th, td { padding:8px 10px; text-align:left; border-bottom:1px solid #243848; }
+th { color:#88aabb; font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; position:sticky; top:0; background:#1f3648; }
+tr:hover { background:#233848; }
+
+.badge { padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; display:inline-block; }
+.badge-strong { background:#1b5e20; color:#66bb6a; }
+.badge-normal { background:#e65100; color:#ffb74d; }
+.badge-pass { background:#424242; color:#9e9e9e; }
+.badge-low { background:#1b5e20; color:#66bb6a; }
+.badge-medium { background:#e65100; color:#ffb74d; }
+.badge-high { background:#b71c1c; color:#ef5350; }
+.badge-top5 { background:#4a148c; color:#ce93d8; }
+.badge-evh { background:#004d40; color:#4dd0e1; }
+.badge-ml { background:#0d47a1; color:#64b5f6; }
+.badge-steam { background:#3e2723; color:#ff8a65; }
+.badge-sharp { background:#263238; color:#ffd54f; }
+
+.ev-positive { color:#66bb6a; font-weight:600; }
+.ev-negative { color:#ef5350; }
+.confidence-bar { width:60px; height:6px; background:#2a4a5a; border-radius:3px; overflow:hidden; display:inline-block; vertical-align:middle; margin-left:4px; }
+.confidence-bar-fill { height:100%; border-radius:3px; }
+
+.empty-state { text-align:center; padding:40px; color:#5a7a8a; }
+.empty-state .icon { font-size:48px; margin-bottom:12px; }
+.section-tabs { display:flex; gap:4px; margin-bottom:16px; }
+.tab { padding:6px 14px; border-radius:6px 6px 0 0; cursor:pointer; font-size:13px; color:#7a9aaa; border:1px solid transparent; border-bottom:none; }
+.tab.active { background:#1f3648; border-color:#2a4a5a; color:#4fc3f7; }
+.tab:hover { color:#c0d0d8; }
+
+.warning-bar { background:#3e2723; border:1px solid #5d4037; border-radius:8px; padding:10px 16px; margin-bottom:16px; color:#ff8a65; font-size:13px; }
+.loading { text-align:center; padding:20px; color:#5a7a8a; }
+.history-chart { width:100%; height:200px; background:#1a2e3c; border-radius:6px; margin-top:12px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>Football AI 每日推荐系统</h1>
+    <div class="date" id="currentDate">加载中...</div>
+  </div>
+  <div class="actions">
+    <button class="btn btn-primary" onclick="refreshAll()">刷新数据</button>
+    <button class="btn btn-danger" onclick="triggerPipeline()">运行流水线</button>
+    <button class="btn" onclick="window.location.href='/docs'">API 文档</button>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- 统计卡片 -->
+  <div class="stats-grid" id="statsGrid">
+    <div class="stat-card"><div class="stat-value" id="statTotal">-</div><div class="stat-label">总推荐</div></div>
+    <div class="stat-card good"><div class="stat-value" id="statStrong">-</div><div class="stat-label">强烈推荐</div></div>
+    <div class="stat-card warn"><div class="stat-value" id="statTop5">-</div><div class="stat-label">Top5 精选</div></div>
+    <div class="stat-card"><div class="stat-value" id="statAvgEV">-</div><div class="stat-label">平均 EV</div></div>
+  </div>
+
+  <!-- 警告栏 -->
+  <div class="warning-bar" id="warningBar" style="display:none"></div>
+
+  <!-- 主面板 -->
+  <div class="panels">
+    <!-- 今日推荐 -->
+    <div class="panel full">
+      <div class="panel-header">
+        <h2>今日推荐</h2>
+        <div class="section-tabs" id="tabs">
+          <div class="tab active" data-tab="all">全部</div>
+          <div class="tab" data-tab="top5">Top5</div>
+          <div class="tab" data-tab="strongest">最强精选</div>
+          <div class="tab" data-tab="lowrisk">低风险</div>
+          <div class="tab" data-tab="highev">高EV</div>
+        </div>
+      </div>
+      <div class="panel-body" id="todayTable">
+        <div class="loading">加载中...</div>
+      </div>
+    </div>
+
+    <!-- 历史统计 -->
+    <div class="panel">
+      <div class="panel-header"><h2>历史统计 (近30天)</h2></div>
+      <div class="panel-body" id="historyStats">
+        <div class="loading">加载中...</div>
+      </div>
+    </div>
+
+    <!-- 引擎状态 -->
+    <div class="panel">
+      <div class="panel-header"><h2>引擎状态</h2></div>
+      <div class="panel-body" id="engineStatus">
+        <div class="loading">加载中...</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const API_BASE = '/api/v1/recommendations';
+let currentTab = 'all';
+let todayData = [];
+
+// ── 初始化 ────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('currentDate').textContent = new Date().toISOString().slice(0, 10);
+  setupTabs();
+  refreshAll();
+});
+
+function setupTabs() {
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentTab = tab.dataset.tab;
+      renderTodayTable();
+    });
+  });
+}
+
+// ── 数据刷新 ──────────────────────────────────────────────
+async function refreshAll() {
+  await Promise.all([
+    fetchToday(),
+    fetchHistoryStats(),
+    fetchEngineStatus(),
+  ]);
+}
+
+async function fetchToday() {
+  try {
+    const [summaryRes, allRes] = await Promise.all([
+      fetch(`${API_BASE}/summary`),
+      fetch(`${API_BASE}/today`),
+    ]);
+    const summary = await summaryRes.json();
+    const all = await allRes.json();
+    todayData = all.data || [];
+    updateStats(summary);
+    renderTodayTable();
+  } catch(e) {
+    document.getElementById('todayTable').innerHTML = '<div class="empty-state"><div class="icon">!</div>无法加载今日数据</div>';
+  }
+}
+
+function updateStats(summary) {
+  document.getElementById('statTotal').textContent = summary.total || 0;
+  document.getElementById('statStrong').textContent = summary.strong_buy || 0;
+  document.getElementById('statTop5').textContent = summary.top5 || 0;
+  document.getElementById('statAvgEV').textContent = ((summary.average_ev || 0) * 100).toFixed(1) + '%';
+
+  if (summary.steam_move_alerts > 0 || summary.sharp_money_alerts > 0) {
+    const bar = document.getElementById('warningBar');
+    bar.style.display = 'block';
+    bar.innerHTML = `市场异常信号: ${summary.steam_move_alerts || 0} 场 Steam Move, ${summary.sharp_money_alerts || 0} 场 Sharp Money 流入`;
+  }
+}
+
+// ── 表格渲染 ──────────────────────────────────────────────
+function renderTodayTable() {
+  const container = document.getElementById('todayTable');
+  let data = todayData;
+
+  if (currentTab === 'top5') data = todayData.filter(r => r.is_top5);
+  else if (currentTab === 'strongest') data = todayData.filter(r => r.is_strongest_pick);
+  else if (currentTab === 'lowrisk') data = todayData.filter(r => r.is_low_risk);
+  else if (currentTab === 'highev') data = todayData.filter(r => r.is_high_ev);
+
+  if (!data.length) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">' + (currentTab === 'all' ? 'No data' : 'Filtered') + '</div>暂无推荐数据</div>';
+    return;
+  }
+
+  let html = `<table>
+    <tr>
+      <th>#</th><th>联赛</th><th>主队</th><th>客队</th><th>推荐</th>
+      <th>赔率</th><th>EV</th><th>置信度</th><th>推荐等级</th><th>风险</th><th>标签</th><th>开赛时间</th>
+    </tr>`;
+
+  data.forEach((r, i) => {
+    const ev = r.ev || 0;
+    const conf = r.confidence || 0;
+    const tags = [];
+    if (r.is_top5) tags.push('<span class="badge badge-top5">Top5</span>');
+    if (r.is_strongest_pick) tags.push('<span class="badge badge-strong">精选</span>');
+    if (r.is_high_ev) tags.push('<span class="badge badge-evh">高EV</span>');
+    if (r.ml_source === 'ml_ensemble') tags.push('<span class="badge badge-ml">ML</span>');
+    if (r.steam_move_detected) tags.push('<span class="badge badge-steam">Steam</span>');
+    if (r.sharp_money_detected) tags.push('<span class="badge badge-sharp">Sharp</span>');
+
+    const levelBadge = r.recommendation_level === 'strong_buy'
+      ? '<span class="badge badge-strong">强烈推荐</span>'
+      : r.recommendation_level === 'normal'
+        ? '<span class="badge badge-normal">一般推荐</span>'
+        : '<span class="badge badge-pass">暂不推荐</span>';
+
+    const riskBadge = r.risk_level === 'low'
+      ? '<span class="badge badge-low">低</span>'
+      : r.risk_level === 'medium'
+        ? '<span class="badge badge-medium">中</span>'
+        : '<span class="badge badge-high">高</span>';
+
+    const confColor = conf >= 0.7 ? '#66bb6a' : conf >= 0.55 ? '#ffb74d' : '#ef5350';
+    const confPct = (conf * 100).toFixed(0);
+
+    html += `<tr>
+      <td>${i + 1}</td>
+      <td>${r.league || '-'}</td>
+      <td>${r.home_team || '-'}</td>
+      <td>${r.away_team || '-'}</td>
+      <td>${r.pick || '-'}</td>
+      <td>${(r.odds || 0).toFixed(2)}</td>
+      <td class="${ev > 0 ? 'ev-positive' : 'ev-negative'}">${(ev * 100).toFixed(1)}%</td>
+      <td>${confPct}% <div class="confidence-bar"><div class="confidence-bar-fill" style="width:${confPct}%;background:${confColor}"></div></div></td>
+      <td>${levelBadge}</td>
+      <td>${riskBadge}</td>
+      <td>${tags.join(' ')}</td>
+      <td>${(r.kickoff_time || '').slice(11, 16) || '-'}</td>
+    </tr>`;
+  });
+
+  html += '</table>';
+  container.innerHTML = html;
+}
+
+// ── 历史统计 ──────────────────────────────────────────────
+async function fetchHistoryStats() {
+  try {
+    const res = await fetch(`${API_BASE}/history/stats?days=30`);
+    const data = await res.json();
+    const container = document.getElementById('historyStats');
+
+    container.innerHTML = `
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <div><strong>总推荐:</strong> ${data.total_recommendations || 0}</div>
+        <div><strong>活跃天数:</strong> ${data.active_days || 0}</div>
+        <div><strong>日均推荐:</strong> ${data.avg_daily_count || 0}</div>
+        <div><strong>平均EV:</strong> ${((data.avg_ev || 0) * 100).toFixed(1)}%</div>
+        <div><strong>最高EV:</strong> ${((data.max_ev || 0) * 100).toFixed(1)}%</div>
+        <div><strong>日期范围:</strong> ${data.date_range?.start || '-'} ~ ${data.date_range?.end || '-'}</div>
+      </div>
+    `;
+  } catch(e) {
+    document.getElementById('historyStats').innerHTML = '<div class="empty-state">暂无历史数据</div>';
+  }
+}
+
+// ── 引擎状态 ──────────────────────────────────────────────
+async function fetchEngineStatus() {
+  try {
+    const res = await fetch(`${API_BASE}/engine/status`);
+    const data = await res.json();
+    const container = document.getElementById('engineStatus');
+
+    const mlStatus = data.ml_models_available
+      ? '<span style="color:#66bb6a">已加载</span>'
+      : '<span style="color:#ef5350">未加载 (使用规则引擎)</span>';
+
+    let mlModels = '';
+    if (data.ml_models) {
+      for (const [task, models] of Object.entries(data.ml_models)) {
+        if (models.length) mlModels += `<div>${task}: ${models.join(', ')}</div>`;
+      }
+    }
+
+    container.innerHTML = `
+      <div style="display:grid; gap:12px;">
+        <div><strong>ML模型:</strong> ${mlStatus}</div>
+        ${mlModels ? `<div style="font-size:12px;color:#88aabb;">${mlModels}</div>` : ''}
+        <div><strong>数据库:</strong> <span style="font-size:12px;color:#88aabb;">${data.database || '-'}</span></div>
+        <div><strong>过滤配置:</strong></div>
+        <div style="font-size:12px;color:#88aabb;padding-left:12px;">
+          <div>最低EV: ${data.filter_config?.min_ev || '-'}</div>
+          <div>最低置信度: ${data.filter_config?.min_confidence || '-'}</div>
+          <div>每日上限: ${data.filter_config?.max_per_day || '-'}</div>
+          <div>最低流动性: ${data.filter_config?.min_liquidity || '-'}</div>
+        </div>
+      </div>
+    `;
+  } catch(e) {
+    document.getElementById('engineStatus').innerHTML = '<div class="empty-state">无法获取引擎状态</div>';
+  }
+}
+
+// ── 触发流水线 ────────────────────────────────────────────
+async function triggerPipeline() {
+  if (!confirm('确定要运行每日推荐流水线吗？')) return;
+  try {
+    const res = await fetch(`${API_BASE}/pipeline/run`, { method: 'POST' });
+    const data = await res.json();
+    alert(`流水线完成！生成 ${data.report?.summary?.total_recommendations || 0} 条推荐`);
+    refreshAll();
+  } catch(e) {
+    alert('流水线执行失败: ' + e.message);
+  }
+}
+</script>
+</body>
+</html>
