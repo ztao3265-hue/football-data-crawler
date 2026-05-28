@@ -84,7 +84,8 @@ class SofascoreCrawler(BaseCrawler):
 
         raw_data = [m.to_dict() for m in all_matches]
         if raw_data:
-            save_json(raw_data, f"data/raw/sofascore_{date_str}.json")
+            from config.paths import RAW_DATA_DIR
+            save_json(raw_data, str(RAW_DATA_DIR / f"sofascore_{date_str}.json"))
 
         return all_matches
 
@@ -127,7 +128,8 @@ class SofascoreCrawler(BaseCrawler):
                 self.logger.debug(f"[Sofascore] scroll_page 失败，使用已有数据继续")
 
             html = await self.browser.get_page_html(page)
-            save_text(html, f"data/raw/sofascore_{date_str}.html")
+            from config.paths import RAW_DATA_DIR
+            save_text(html, str(RAW_DATA_DIR / f"sofascore_{date_str}.html"))
 
             await self.browser.screenshot(
                 page, f"sofascore_{date_str}_{datetime.now():%H%M%S}.png"
@@ -256,7 +258,8 @@ class SofascoreCrawler(BaseCrawler):
                                      sorted(league_odds.items(), key=lambda x: x[1], reverse=True))
                     )
 
-            interceptor.save_responses(f"data/raw/sofascore_api_{date_str}.json")
+            from config.paths import RAW_DATA_DIR
+            interceptor.save_responses(str(RAW_DATA_DIR / f"sofascore_api_{date_str}.json"))
 
         except Exception as e:
             self.logger.error(f"[Sofascore] 浏览器采集异常: {type(e).__name__}: {e}")

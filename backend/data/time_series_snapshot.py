@@ -20,13 +20,16 @@ class TimeSeriesSnapshot:
     - 快照差异对比（比较两个时间点的数据变化）
     """
 
-    def __init__(self, db_path: str = "data/time_series.db"):
+    def __init__(self, db_path: str = None):
         """
         初始化快照管理器
 
         Args:
             db_path: SQLite 数据库路径
         """
+        if db_path is None:
+            from config.paths import DB_TIME_SERIES
+            db_path = str(DB_TIME_SERIES)
         self.db_path = Path(db_path)
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self._init_db()

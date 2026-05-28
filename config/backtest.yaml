@@ -8,7 +8,7 @@ data:
   test_csv: "datasets/test.csv"
   # 或者从 SQLite 直接读取 (可选)
   use_sqlite: false
-  database: "data/football_history.db"
+  database: "D:/FootballData/database/football_history.db"
 
 # 回测窗口
 windows:

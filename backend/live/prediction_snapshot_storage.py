@@ -32,13 +32,16 @@ class PredictionSnapshotStorage:
     - 支持历史回溯
     """
 
-    def __init__(self, db_path: str = "data/prediction_snapshots.db"):
+    def __init__(self, db_path: str = None):
         """
         初始化存储
 
         Args:
             db_path: 数据库路径
         """
+        if db_path is None:
+            from config.paths import DB_PREDICTION_SNAPSHOTS
+            db_path = str(DB_PREDICTION_SNAPSHOTS)
         self.db_path = Path(db_path)
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self._init_db()

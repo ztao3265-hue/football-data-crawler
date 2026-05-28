@@ -33,9 +33,10 @@ from .performance_metrics import PerformanceMetrics
 from .report_generator import ReportGenerator
 from .slippage_simulator import SlippageSimulator
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+from config.paths import MODELS_DIR as _MODELS_DIR, PROJECT_ROOT
+
 DATASETS_DIR = PROJECT_ROOT / "datasets"
-MODELS_DIR = PROJECT_ROOT / "models"
+MODELS_DIR = _MODELS_DIR
 REPORTS_DIR = PROJECT_ROOT / "reports"
 CONFIG_DIR = PROJECT_ROOT / "config"
 

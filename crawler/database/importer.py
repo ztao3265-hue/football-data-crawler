@@ -342,7 +342,10 @@ class MatchImporter:
             existing.league_id = league_id
 
 
-def import_clean_file(filepath: str = "exports/clean_matches.json") -> dict:
+def import_clean_file(filepath: str = None) -> dict:
+    if filepath is None:
+        from config.paths import EXPORTS_DIR
+        filepath = str(EXPORTS_DIR / "clean_matches.json")
     """从 clean_matches.json 文件导入数据库"""
     path = Path(filepath)
     if not path.exists():

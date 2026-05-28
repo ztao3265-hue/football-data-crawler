@@ -201,14 +201,15 @@ def _parse_match(m: dict, league_name: str, season: str) -> dict | None:
 
 def export_combined():
     """导出合并文件"""
-    Path("exports").mkdir(parents=True, exist_ok=True)
+    from config.paths import EXPORTS_DIR
+    EXPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
-    json_path = "exports/historical_5leagues_5seasons.json"
+    json_path = EXPORTS_DIR / "historical_5leagues_5seasons.json"
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(all_collected, f, ensure_ascii=False, indent=2)
     logger.info(f"合并 JSON: {json_path} ({len(all_collected)} 条)")
 
-    csv_path = "exports/historical_5leagues_5seasons.csv"
+    csv_path = EXPORTS_DIR / "historical_5leagues_5seasons.csv"
     try:
         import pandas as pd
         df = pd.DataFrame(all_collected)
@@ -287,8 +288,8 @@ def print_final_report():
     print(f"  DB 错误:    {global_stats['db_errors']} 场")
     print(f"  ──────────────────────────")
     print(f"  导出文件:   {len(all_collected)} 场")
-    print(f"    exports/historical_5leagues_5seasons.json")
-    print(f"    exports/historical_5leagues_5seasons.csv")
+    print(f"    {EXPORTS_DIR / 'historical_5leagues_5seasons.json'}")
+    print(f"    {EXPORTS_DIR / 'historical_5leagues_5seasons.csv'}")
     print("=" * 60)
     print()
 

@@ -28,11 +28,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
+from config.paths import RAW_DATA_DIR, DATABASE_DIR, DB_FOOTBALL_HISTORY
+
 # ── 项目根目录 ──────────────────────────────────────────────
 PROJECT_ROOT = Path(__file__).resolve().parent
-DATA_RAW = PROJECT_ROOT / "data" / "raw"
-DATA_PROCESSED = PROJECT_ROOT / "data" / "processed"
-DATA_DB = PROJECT_ROOT / "data" / "football_history.db"
+DATA_RAW = RAW_DATA_DIR
+DATA_PROCESSED = RAW_DATA_DIR  # processed data stays in raw_data
+DATA_DB = DB_FOOTBALL_HISTORY
 DATA_REPORTS = PROJECT_ROOT / "data" / "reports"
 
 # ── Excel 文件路径 ──────────────────────────────────────────

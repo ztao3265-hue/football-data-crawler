@@ -74,8 +74,8 @@ def main():
     parser.add_argument(
         "--output", "-o",
         type=str,
-        default="exports",
-        help="导出目录，默认 exports",
+        default="D:/FootballData/exports",
+        help="导出目录，默认 D:/FootballData/exports",
     )
     parser.add_argument(
         "--db-init",
@@ -86,7 +86,7 @@ def main():
         "--db-import",
         type=str,
         nargs="?",
-        const="exports/clean_matches.json",
+        const="D:/FootballData/exports/clean_matches.json",
         help="将 clean_matches.json 导入数据库",
     )
     parser.add_argument(

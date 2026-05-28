@@ -28,7 +28,8 @@ def collect_status() -> dict:
 
     # 检查各数据源的最近采集状态
     for source in ["sofascore", "fotmob", "football-data"]:
-        json_file = Path(f"exports/matches_today.json")
+        from config.paths import EXPORTS_DIR
+        json_file = EXPORTS_DIR / "matches_today.json"
 
         if json_file.exists():
             try:

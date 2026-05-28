@@ -7,10 +7,12 @@ import sqlite3
 import sys
 from pathlib import Path
 
+from config.paths import DB_FOOTBALL_HISTORY, RAW_DATA_DIR
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-DB_PATH = PROJECT_ROOT / "data" / "football_history.db"
-CSV_DIR = PROJECT_ROOT / "data" / "processed" / "csv"
-JSON_DIR = PROJECT_ROOT / "data" / "processed" / "json"
+DB_PATH = DB_FOOTBALL_HISTORY
+CSV_DIR = RAW_DATA_DIR / "csv"
+JSON_DIR = RAW_DATA_DIR / "json"
 REPORTS_DIR = PROJECT_ROOT / "data" / "reports"
 
 

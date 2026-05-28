@@ -40,7 +40,8 @@ class FotmobCrawler(BaseCrawler):
 
         raw_data = [m.to_dict() for m in matches]
         if raw_data:
-            save_json(raw_data, f"data/raw/fotmob_{date_str}.json")
+            from config.paths import RAW_DATA_DIR
+            save_json(raw_data, str(RAW_DATA_DIR / f"fotmob_{date_str}.json"))
 
         return matches
 
@@ -132,7 +133,7 @@ class FotmobCrawler(BaseCrawler):
             await self.browser.scroll_page(page, times=3)
 
             html = await self.browser.get_page_html(page)
-            save_text(html, f"data/raw/fotmob_{date_str}.html")
+            save_text(html, str(RAW_DATA_DIR / f"fotmob_{date_str}.html"))
 
             await self.browser.screenshot(
                 page, f"fotmob_{date_str}_{datetime.now():%H%M%S}.png"
@@ -154,7 +155,7 @@ class FotmobCrawler(BaseCrawler):
                             if match:
                                 matches.append(match)
 
-            interceptor.save_responses(f"data/raw/fotmob_api_{date_str}.json")
+            interceptor.save_responses(str(RAW_DATA_DIR / f"fotmob_api_{date_str}.json"))
 
         except Exception as e:
             self.logger.error(f"FotMob 浏览器采集失败: {e}")

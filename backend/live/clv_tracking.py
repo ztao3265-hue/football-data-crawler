@@ -31,13 +31,16 @@ class CLVTracking:
     - 计算 CLV value
     """
 
-    def __init__(self, db_path: str = "data/clv_tracking.db"):
+    def __init__(self, db_path: str = None):
         """
         初始化 CLV 追踪
 
         Args:
             db_path: 数据库路径
         """
+        if db_path is None:
+            from config.paths import DB_CLV_TRACKING
+            db_path = str(DB_CLV_TRACKING)
         self.db_path = Path(db_path)
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self._init_db()

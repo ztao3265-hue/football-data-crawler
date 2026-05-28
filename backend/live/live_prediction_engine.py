@@ -93,7 +93,7 @@ class LivePredictionEngine:
 
     def __init__(
         self,
-        db_path: str = "data/live_predictions.db",
+        db_path: str = None,
         odds_collector: Optional[RealtimeOddsCollector] = None
     ):
         """
@@ -103,6 +103,9 @@ class LivePredictionEngine:
             db_path: 预测数据库路径
             odds_collector: 赔率采集器实例
         """
+        if db_path is None:
+            from config.paths import DB_LIVE_PREDICTIONS
+            db_path = str(DB_LIVE_PREDICTIONS)
         self.db_path = Path(db_path)
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
 

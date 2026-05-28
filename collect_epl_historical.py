@@ -174,16 +174,17 @@ def _parse_epl_match(m: dict) -> dict | None:
 
 def export_files(matches: list[dict]):
     """导出 JSON + CSV"""
-    Path("exports").mkdir(parents=True, exist_ok=True)
+    from config.paths import EXPORTS_DIR
+    EXPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
     # JSON
-    json_path = "exports/epl_2023_2024_matches.json"
+    json_path = EXPORTS_DIR / "epl_2023_2024_matches.json"
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(matches, f, ensure_ascii=False, indent=2)
     logger.info(f"[EPL] JSON 导出: {json_path} ({len(matches)} 条)")
 
     # CSV
-    csv_path = "exports/epl_2023_2024_matches.csv"
+    csv_path = EXPORTS_DIR / "epl_2023_2024_matches.csv"
     try:
         import pandas as pd
         df = pd.DataFrame(matches)

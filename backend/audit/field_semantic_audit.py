@@ -22,8 +22,9 @@ from typing import Dict, List, Optional, Tuple
 import numpy as np
 import pandas as pd
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-DB_PATH = PROJECT_ROOT / "data" / "football_history.db"
+from config.paths import DB_FOOTBALL_HISTORY, PROJECT_ROOT
+
+DB_PATH = DB_FOOTBALL_HISTORY
 DATASETS_DIR = PROJECT_ROOT / "datasets"
 REPORTS_DIR = PROJECT_ROOT / "reports"
 AUDIT_DIR = REPORTS_DIR / "semantic_audit"
@@ -543,7 +544,8 @@ class FieldSemanticAuditor:
 
         # 尝试从原始 JSON 文件中匹配 (如果存在)
         raw_records = []
-        for raw_file in (PROJECT_ROOT / "data" / "raw").glob("sofascore_*.json"):
+        from config.paths import RAW_DATA_DIR
+        for raw_file in RAW_DATA_DIR.glob("sofascore_*.json"):
             try:
                 with open(raw_file, "r", encoding="utf-8") as f:
                     raw_data = json.load(f)

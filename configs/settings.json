@@ -19,7 +19,7 @@
   },
   "export": {
     "formats": ["json", "csv"],
-    "output_dir": "exports",
+    "output_dir": "D:/FootballData/exports",
     "filename_prefix": "matches"
   },
   "logging": {

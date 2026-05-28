@@ -51,6 +51,9 @@ data/reports/*
 !data/raw/.gitkeep
 !data/clean/.gitkeep
 
+# ── 统一数据目录 (D:/FootballData) ────────────────────────
+# 所有数据文件已迁移到 D:/FootballData，该目录完全由外部管理
+
 # ── 日志 ────────────────────────────────────────────────
 *.log
 !crawler/logs/.gitkeep

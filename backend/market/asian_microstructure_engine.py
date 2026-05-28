@@ -73,8 +73,11 @@ class AsianMicrostructureEngine:
     8. 风险控制 (5种过滤器)
     """
 
-    def __init__(self, data_dir: str = "datasets", db_path: str = "data/football_history.db",
+    def __init__(self, data_dir: str = "datasets", db_path: str = None,
                  output_dir: str = "reports/asian_microstructure"):
+        if db_path is None:
+            from config.paths import DB_FOOTBALL_HISTORY
+            db_path = str(DB_FOOTBALL_HISTORY)
         self.data_dir = Path(data_dir)
         self.db_path = Path(db_path)
         self.output_dir = Path(output_dir)
@@ -1294,7 +1297,8 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="亚洲盘市场微结构引擎")
     parser.add_argument("--data-dir", default="datasets", help="数据集目录")
-    parser.add_argument("--db", default="data/football_history.db", help="SQLite 数据库路径")
+    from config.paths import DB_FOOTBALL_HISTORY
+    parser.add_argument("--db", default=str(DB_FOOTBALL_HISTORY), help="SQLite 数据库路径")
     parser.add_argument("--output", default="reports/asian_microstructure", help="输出目录")
     args = parser.parse_args()
 
@@ -1302,7 +1306,7 @@ if __name__ == "__main__":
     if not Path(args.data_dir).exists():
         args.data_dir = str(Path(__file__).parent.parent.parent / "datasets")
     if not Path(args.db).exists():
-        args.db = str(Path(__file__).parent.parent.parent / "data" / "football_history.db")
+        args.db = str(DB_FOOTBALL_HISTORY)
     if not Path(args.output).exists():
         args.output = str(Path(__file__).parent.parent.parent / "reports" / "asian_microstructure")
 

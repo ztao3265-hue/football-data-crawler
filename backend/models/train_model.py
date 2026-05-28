@@ -34,9 +34,11 @@ from sklearn.metrics import (
 from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 
+from config.paths import MODELS_DIR as _MODELS_DIR, PROJECT_ROOT
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 DATASETS_DIR = PROJECT_ROOT / "datasets"
-MODELS_DIR = PROJECT_ROOT / "models"
+MODELS_DIR = _MODELS_DIR
 REPORTS_DIR = PROJECT_ROOT / "reports"
 
 warnings.filterwarnings("ignore")

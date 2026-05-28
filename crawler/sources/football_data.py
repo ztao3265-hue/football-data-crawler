@@ -61,7 +61,8 @@ class FootballDataCrawler(BaseCrawler):
 
         raw_data = [m.to_dict() for m in matches]
         if raw_data:
-            save_json(raw_data, f"data/raw/football_data_{date_str}.json")
+            from config.paths import RAW_DATA_DIR
+            save_json(raw_data, str(RAW_DATA_DIR / f"football_data_{date_str}.json"))
 
         return matches
 

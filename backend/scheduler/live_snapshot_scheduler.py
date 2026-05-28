@@ -54,7 +54,7 @@ class LiveSnapshotScheduler:
 
     def __init__(
         self,
-        snapshot_db_path: str = "data/time_series.db",
+        snapshot_db_path: str = None,
         config_path: Optional[str] = None
     ):
         """
@@ -64,6 +64,9 @@ class LiveSnapshotScheduler:
             snapshot_db_path: 快照数据库路径
             config_path: 配置文件路径
         """
+        if snapshot_db_path is None:
+            from config.paths import DB_TIME_SERIES
+            snapshot_db_path = str(DB_TIME_SERIES)
         self.snapshot_manager = TimeSeriesSnapshot(snapshot_db_path)
         self.config_path = config_path
         self.config = self._load_config() if config_path else {}

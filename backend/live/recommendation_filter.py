@@ -57,7 +57,7 @@ class RecommendationFilter:
 
     def __init__(
         self,
-        db_path: str = "data/recommendation_filters.db",
+        db_path: str = None,
         min_ev: float = DEFAULT_MIN_EV,
         min_confidence: float = DEFAULT_MIN_CONFIDENCE,
         min_liquidity: LiquidityLevel = DEFAULT_MIN_LIQUIDITY,
@@ -73,6 +73,9 @@ class RecommendationFilter:
             min_liquidity: 最低流动性等级
             max_per_day: 每日最大推荐数
         """
+        if db_path is None:
+            from config.paths import DB_RECOMMENDATION
+            db_path = str(DB_RECOMMENDATION)
         self.db_path = Path(db_path)
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
 

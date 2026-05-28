@@ -23,8 +23,9 @@ from typing import Dict, List, Optional, Tuple
 import numpy as np
 import pandas as pd
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-DB_PATH = PROJECT_ROOT / "data" / "football_history.db"
+from config.paths import DB_FOOTBALL_HISTORY, PROJECT_ROOT
+
+DB_PATH = DB_FOOTBALL_HISTORY
 DATASETS_DIR = PROJECT_ROOT / "datasets"
 REPORTS_DIR = PROJECT_ROOT / "reports"
 AUDIT_DIR = REPORTS_DIR / "odds_mapping"

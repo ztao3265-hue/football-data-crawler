@@ -37,8 +37,8 @@ class RealtimeOddsCollector:
 
     def __init__(
         self,
-        db_path: str = "data/live_odds.db",
-        snapshot_db_path: str = "data/time_series.db"
+        db_path: str = None,
+        snapshot_db_path: str = None
     ):
         """
         初始化采集器
@@ -47,6 +47,12 @@ class RealtimeOddsCollector:
             db_path: 赔率数据库路径
             snapshot_db_path: 快照数据库路径
         """
+        if db_path is None:
+            from config.paths import DB_LIVE_ODDS
+            db_path = str(DB_LIVE_ODDS)
+        if snapshot_db_path is None:
+            from config.paths import DB_TIME_SERIES
+            snapshot_db_path = str(DB_TIME_SERIES)
         self.db_path = Path(db_path)
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
 
