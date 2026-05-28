@@ -292,18 +292,33 @@ class ExecutionTracker:
         }
 
     def calculate_execution_score(self, date: Optional[str] = None) -> float:
-        """计算执行质量评分 (0-100)"""
-        comp = self.compare_execution(date)
-        total = comp["total_recommendations"]
-        if total == 0:
-            return 100.0
+        """计算执行质量评分 (0-100)，基于真实投注结果"""
+        bets = self.get_user_bets(date=date)
+        recs = self.get_recommendations(date=date)
 
-        follow_score = comp["follow_rate"]
-        pnl_score = 50.0
-        if comp["system_pnl"] > 0:
-            pnl_score = min(50, max(0, (comp["user_pnl"] / comp["system_pnl"]) * 50))
+        total_bets = len(bets)
+        total_recs = len(recs)
 
-        return round(follow_score * 0.5 + pnl_score, 1)
+        # Follow rate: how many recommendations received a bet (0-40 points)
+        rec_ids = {r["rec_id"] for r in recs if r["rec_id"]}
+        bet_rec_ids = {b["rec_id"] for b in bets if b["rec_id"]}
+        followed = len(rec_ids & bet_rec_ids)
+        follow_rate = (followed / total_recs * 100) if total_recs > 0 else 0
+        follow_score = min(40, follow_rate * 0.4)
+
+        # Win rate score from settled bets (0-30 points)
+        settled = [b for b in bets if b.get("status") in ("won", "lost", "half_won", "half_lost")]
+        won = sum(1 for b in settled if b["status"] in ("won", "half_won"))
+        win_rate = (won / len(settled) * 100) if settled else 0
+        win_score = min(30, win_rate * 0.5)
+
+        # P&L score from settled bets (0-30 points)
+        total_pnl = sum(b.get("pnl", 0) or 0 for b in settled)
+        total_stake = sum(b.get("stake", 0) or 0 for b in settled)
+        roi = (total_pnl / total_stake * 100) if total_stake > 0 else 0
+        pnl_score = min(30, max(0, 15 + roi * 1.5))
+
+        return round(follow_score + win_score + pnl_score, 1)
 
     def save_daily_quality(self, date: Optional[str] = None):
         """保存每日执行质量记录"""
